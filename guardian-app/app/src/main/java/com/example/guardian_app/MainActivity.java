@@ -2,7 +2,9 @@ package com.example.guardian_app;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -17,7 +19,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
-    private TextView textViewResult;
+
 
 
     @Override
@@ -26,46 +28,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         System.out.println("here");
 
-        textViewResult = findViewById(R.id.text_view_result);
-
-
-        Gson gson = new GsonBuilder()
-                .setLenient()
-                .create();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:9000/")
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-
-        InfoRetreiverApi infoRetreiverApi = retrofit.create(InfoRetreiverApi.class);
-
-        Call<List<Info>> call = infoRetreiverApi.getInfo();
-
-        call.enqueue(new Callback<List<Info>>() {
-            @Override
-            public void onResponse(Call<List<Info>> call, Response<List<Info>> response) {
-                if (!response.isSuccessful()) {
-                    textViewResult.setText("Code: " + response.code());
-                    return;
-                }
-
-                List<Info> infos = response.body();
-                for (Info info : infos) {
-                    String content = "";
-                    content += "ID: " + info.getId() + "\n";
-                    content += "Location " + info.getLocation() + "\n";
-                    textViewResult.append(content);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Info>> call, Throwable t) {
-                textViewResult.setText(t.getMessage());
-            }
-        });
-
+    }
+    public void goToAddChild (View view){
+        Intent intent = new Intent(this, AddChildActivity.class);
+        startActivity(intent);
     }
 
+    public void goToCheckMonitoringChildren (View view){
+        Intent intent = new Intent(this, CheckMonitoringChildren.class);
+        startActivity(intent);
+    }
+
+    public void goToCheckChildLocation(View view){
+        Intent intent = new Intent(this, CheckChildLocation.class);
+        startActivity(intent);
+    }
 
 }

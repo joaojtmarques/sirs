@@ -81,11 +81,18 @@ public class SimpleHttpServer {
 			String uniqueID = UUID.randomUUID().toString();
 			_requestedAssociations.put(pKey, uniqueID);
 
+			// create JSON object with data
+			JSONArray ja = new JSONArray();
+			JSONObject jo = new JSONObject();
+			jo.put("id", uniqueID);
+			ja.put(jo);
+
 			// send response
+			String response = ja.toString();
 			he.getResponseHeaders().set("Content-Type", "application/json");
-			he.sendResponseHeaders(200, uniqueID.length());
+			he.sendResponseHeaders(200, response.length());
 			OutputStream os = he.getResponseBody();
-			os.write(uniqueID.getBytes());
+			os.write(response.getBytes());
 			os.close();
 		}
 	}

@@ -41,6 +41,8 @@ public class SimpleHttpServer {
 			System.out.println("server started at " + port);
 			server.createContext("/bind-request", new BindRequestHandler());
 			server.createContext("/bind-confirmation", new BindConfirmationHandler());
+			//TODO: Henrique: o sendInfo foi só para eu testar as minhas cenas, faz o que achares melhor
+			server.createContext("/sendInfo", new ReceiveLocationHandler());
 			server.createContext("/post", new PostHandler());
 			server.createContext("/get", new GetHandler());
 			server.setExecutor(null);
@@ -127,6 +129,25 @@ public class SimpleHttpServer {
 			}
 
 			// send response
+			he.sendResponseHeaders(200, -1);
+		}
+	}
+
+	//TODO: Henrique, faz a tua cena bro
+	public class ReceiveLocationHandler implements HttpHandler{
+		// receives JSON with
+		// 1. childID
+		// 2. Location object
+		// 3. Date string
+		// stores data (not yet)
+		@Override
+		public void handle(HttpExchange he) throws IOException{
+			System.out.println("ola");
+			InputStreamReader isr = new InputStreamReader(he.getRequestBody(), "utf-8");
+			BufferedReader br = new BufferedReader(isr);
+			String request = br.readLine();
+
+			System.out.println(request);
 			he.sendResponseHeaders(200, -1);
 		}
 	}

@@ -69,26 +69,23 @@ public class SimpleHttpServer {
 		public void handle(HttpExchange he) throws IOException {
 			System.out.println("Received bind-request request.");
 
-			// parse request
-			Map<String, Object> parameters = new HashMap<>();
+			// get request message
 			InputStreamReader isr = new InputStreamReader(he.getRequestBody(), "utf-8");
 			BufferedReader br = new BufferedReader(isr);
-			String query = br.readLine();
-			parseQuery(query, parameters);
+			String request = br.readLine();
 
 			// add key to requestedAssociations
-			String pKey = (String) parameters.get("key");
+			String pKey = request;
+			System.out.println(pKey);
 			String uniqueID = UUID.randomUUID().toString();
 			_requestedAssociations.put(pKey, uniqueID);
 
 			// create JSON object with data
-			JSONArray ja = new JSONArray();
 			JSONObject jo = new JSONObject();
 			jo.put("id", uniqueID);
-			ja.put(jo);
 
 			// send response
-			String response = ja.toString();
+			String response = jo.toString();
 			he.getResponseHeaders().set("Content-Type", "application/json");
 			he.sendResponseHeaders(200, response.length());
 			OutputStream os = he.getResponseBody();

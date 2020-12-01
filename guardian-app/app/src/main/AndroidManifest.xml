@@ -12,7 +12,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Guardianapp"
         android:usesCleartextTraffic="true">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,6 +22,12 @@
         </activity>
         <activity android:name=".AddChildActivity"
             android:parentActivityName=".MainActivity">
+        </activity>
+        <activity android:name=".GenerateQrCode"
+            android:parentActivityName=".AddChildActivity">
+        </activity>
+        <activity android:name=".ChildAdded"
+            android:parentActivityName=".GenerateQrCode">
         </activity>
         <activity android:name=".CheckMonitoringChildren"
             android:parentActivityName=".MainActivity">

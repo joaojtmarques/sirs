@@ -1,9 +1,9 @@
 package com.example.child_app;
 
 public class Task extends java.util.TimerTask{
-    private MainActivity activity;
+    private LocationActivity activity;
 
-    public Task(MainActivity Activity){
+    public Task(LocationActivity Activity){
         this.activity = Activity;
     }
 

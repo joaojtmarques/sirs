@@ -1,5 +1,6 @@
 package com.example.child_app;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -7,6 +8,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
@@ -37,6 +39,7 @@ public class LocationActivity extends AppCompatActivity {
     private Timer timer;
     private TimerTask task;
     private CommunicationInterface communicationInterface;
+    private static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
     @SuppressLint("MissingPermission")
     @Override
@@ -45,7 +48,7 @@ public class LocationActivity extends AppCompatActivity {
         setContentView(R.layout.location_activity);
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:9000/")
+                .baseUrl("http://192.168.1.10:9000/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -58,10 +61,13 @@ public class LocationActivity extends AppCompatActivity {
         timer.scheduleAtFixedRate(this.task, 3000, 10000);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     protected void getCurrentLocation() {
 
         Log.i(null,"Request Sent");
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            System.out.println("No permission");
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
             return;
         }
 
@@ -73,6 +79,7 @@ public class LocationActivity extends AppCompatActivity {
                         if (location != null) {
                             t.setText("");
                             @SuppressLint("DefaultLocale") String message = String.format("%s\n%f, %f", new Date(location.getTime()).toString(), location.getLatitude(), location.getLongitude());
+                            System.out.println("LOCATION: " + message);
                             t.setText(message);
 
                             JSONObject json = new JSONObject();

@@ -3,12 +3,16 @@ package com.example.child_app;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -34,6 +38,9 @@ import java.io.InputStream;
 
 public class ReadQrCode extends AppCompatActivity {
 
+    public static TextView resultTextView;
+    private Button scan_btn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,7 +48,18 @@ public class ReadQrCode extends AppCompatActivity {
 
         setContentView(R.layout.read_qrcode_activity);
 
-        System.out.println("WHATS GOOD CARALHO");
+        resultTextView = (TextView) findViewById(R.id.result_text);
+        scan_btn = (Button) findViewById(R.id.btn_scan_qrCode);
+
+        scan_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), ScanCodeActivity.class));
+            }
+        });
+
+        //reading qrCode from emulator path
+        /*
         @SuppressLint("SdCardPath") String path ="/sdcard/Pictures/qrCode.png";
         System.out.println(path);
 
@@ -54,12 +72,13 @@ public class ReadQrCode extends AppCompatActivity {
         Bitmap bitmap = BitmapFactory.decodeStream(is);
         String decoded=scanQRImage(bitmap);
         Log.i("QrTest", "Decoded string="+decoded);
-
+        */
 
 
 
     }
-
+    // qrCode scan using file path emulator
+    /*
     public static String scanQRImage(Bitmap bMap) {
         String contents = null;
 
@@ -80,6 +99,7 @@ public class ReadQrCode extends AppCompatActivity {
         }
         return contents;
     }
+    */
 
 
 }

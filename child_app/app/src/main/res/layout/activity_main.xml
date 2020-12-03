@@ -25,8 +25,8 @@
         android:layout_width="269dp"
         android:layout_height="135dp"
         android:layout_marginTop="68dp"
-
-        android:text="Check Child Location"
+        android:onClick="goToLocationActivity"
+        android:text="Location Activity"
         app:layout_constraintBottom_toTopOf="@+id/button3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

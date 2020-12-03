@@ -29,12 +29,12 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
 
     }
-    /*
-    public void goToCheckMonitoringChildren (View view){
-        Intent intent = new Intent(this, CheckMonitoringChildren.class);
+
+    public void goToLocationActivity (View view){
+        Intent intent = new Intent(this, LocationActivity.class);
         startActivity(intent);
     }
-
+    /*
     public void goToCheckChildLocation(View view){
         Intent intent = new Intent(this, CheckChildLocation.class);
         startActivity(intent);

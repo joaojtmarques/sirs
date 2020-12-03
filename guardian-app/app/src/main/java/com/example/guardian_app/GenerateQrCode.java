@@ -42,6 +42,7 @@ public class GenerateQrCode extends AppCompatActivity {
         if (extras != null) {
             dataStore = extras.getParcelable("dataStore");
             System.out.println(dataStore.getChildNames());
+            childCode = extras.getString("childCode");
         }
 
 
@@ -51,9 +52,13 @@ public class GenerateQrCode extends AppCompatActivity {
         textViewResult.setText("Please read this QrCode in your childs Device");
 
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+        JsonObject bindRequest = new JsonObject();
+        bindRequest.addProperty("publicKey", "publicKeyhuererere");
+        bindRequest.addProperty("associationId", childCode);
+        System.out.println(bindRequest.toString());
 
         try{
-            BitMatrix bitMatrix = multiFormatWriter.encode("MamasMamas", BarcodeFormat.QR_CODE,500,500);
+            BitMatrix bitMatrix = multiFormatWriter.encode(bindRequest.toString(), BarcodeFormat.QR_CODE,500,500);
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
             Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
             imageView.setImageBitmap(bitmap);
@@ -67,6 +72,7 @@ public class GenerateQrCode extends AppCompatActivity {
         Intent intent = new Intent(this, ChildAdded.class);
         System.out.println(dataStore.getChildNames());
         intent.putExtra("dataStore", dataStore);
+        intent.putExtra("childCode", childCode);
         startActivity(intent);
     }
 

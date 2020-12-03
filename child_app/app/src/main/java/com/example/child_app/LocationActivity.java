@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,15 +41,24 @@ public class LocationActivity extends AppCompatActivity {
     private TimerTask task;
     private CommunicationInterface communicationInterface;
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+    private String associationId;
 
     @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.location_activity);
+        System.out.println("ON LOCATION ACTICITY!");
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            System.out.println("extras were not null");
+            associationId = extras.getString("associationId");
+            System.out.println("AssociationId + " + associationId);
+        }
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.1.10:9000/")
+                .baseUrl("http://144.64.187.232:9000/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -82,37 +92,38 @@ public class LocationActivity extends AppCompatActivity {
                             System.out.println("LOCATION: " + message);
                             t.setText(message);
 
-                            JSONObject json = new JSONObject();
-                            try {
-                                json.put("id", "SOU O TEU FILHO BOY");
-                                json.put("Location",location);
-                                json.put("Timestamp",new Date(location.getTime()).toString());
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                            JsonObject json = new JsonObject();
+                            json.addProperty("associationId", associationId);
+                            json.addProperty("data", message);
 
-                            Call<String> call = communicationInterface.sendInfo(json);
-                            call.enqueue(new Callback<String>() {
+                            Call<JsonObject> call = communicationInterface.sendInfo(json);
+                            call.enqueue(new Callback<JsonObject>() {
                                 @Override
-                                public void onResponse(Call<String> call, Response<String> response) {
+                                public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                                     if (!response.isSuccessful()){
                                         t.setText("Code: " + response.code());
                                     }
                                     t.setText(response.toString());
+                                    JsonObject jsonObject1 = response.body();
+
+                                    String content = "";
+                                    content += "Code: " + response.code();
+                                    content += jsonObject1.get("ack");
+                                    System.out.println("Bind Result" + content);
                                 }
 
                                 @Override
-                                public void onFailure(Call<String> call, Throwable error) {
+                                public void onFailure(Call<JsonObject> call, Throwable error) {
                                     t.setText(error.getMessage());
                                 }
                             });
                         } else {
-                            getLastLocation();
+                            //getLastLocation();
                         }
                     }
                 });
     }
-
+/*
     private void getLastLocation(){
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -159,4 +170,5 @@ public class LocationActivity extends AppCompatActivity {
                     }
                 });
     }
+    */
 }

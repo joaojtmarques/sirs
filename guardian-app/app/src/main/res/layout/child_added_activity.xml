@@ -1,31 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="8dp"
+    android:orientation="vertical"
+    android:gravity="center"
     tools:context=".ChildAdded">
 
     <TextView
         android:id="@+id/text_view_result"
-        android:layout_width="313dp"
-        android:layout_height="119dp"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
         android:textColor="#000"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteY="233dp" />
+        android:textSize="18sp"/>
 
     <Button
         android:id="@+id/submitButton"
-        android:layout_width="199dp"
-        android:layout_height="75dp"
-        android:layout_marginBottom="252dp"
-        android:onClick="goToMainActivity"
-        android:text="Submit"
-        tools:ignore="MissingConstraints" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="OK"
+        android:gravity="center"
+        android:textSize="22sp"
+        android:layout_marginTop="20dp"
+        android:onClick="goToMainActivity"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

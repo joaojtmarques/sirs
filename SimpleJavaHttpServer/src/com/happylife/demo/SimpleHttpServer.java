@@ -18,21 +18,13 @@ import com.sun.net.httpserver.HttpServer;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javax.xml.*;
+
 public class SimpleHttpServer {
 	private int port;
 	private HttpServer server;
 
-	// maps guardian's public key to a requested association's id
-	private HashMap<String, String> _requestedAssociations = new HashMap<>();
-
-	// maps association id to public key of who has access
-	private HashMap<String, String> _associations = new HashMap<>();
-
-	// maps child id to association id
-	private HashMap<String, String> _children = new HashMap<>();
-
-	// maps association id to child's data
-	private HashMap<String, ArrayList<Byte[]>> _data = new HashMap<>();
+	private DataStore _datastore = new DataStore();
 
 	public void Start(int port) {
 		try {
@@ -41,10 +33,9 @@ public class SimpleHttpServer {
 			System.out.println("server started at " + port);
 			server.createContext("/bind-request", new BindRequestHandler());
 			server.createContext("/bind-confirmation", new BindConfirmationHandler());
-			//TODO: Henrique: o sendInfo foi só para eu testar as minhas cenas, faz o que achares melhor
-			server.createContext("/sendInfo", new ReceiveLocationHandler());
-			server.createContext("/post", new PostHandler());
-			server.createContext("/get", new GetHandler());
+			server.createContext("/bind-check", new BindCheckHandler());
+			server.createContext("/post-location", new PostLocationHandler());
+			server.createContext("/get-location", new GetLocationHandler());
 			server.setExecutor(null);
 			server.start();
 		} catch (IOException e) {
@@ -70,19 +61,21 @@ public class SimpleHttpServer {
 		@Override
 		public void handle(HttpExchange he) throws IOException {
 			System.out.println("Received bind-request request.");
+			System.out.println("Request IP:" + he.getRemoteAddress());
 
 			// get request message
 			InputStreamReader isr = new InputStreamReader(he.getRequestBody(), "utf-8");
 			BufferedReader br = new BufferedReader(isr);
-			String request = br.readLine();
+			String requestString = br.readLine();
+			JSONObject request = new JSONObject(requestString);
 
 			// add key to requestedAssociations
-			String pKey = request;
-			System.out.println(pKey);
+			String pKey = request.getString("publicKey");
+			System.out.println("PublicKey: " + pKey);
 			String uniqueID = UUID.randomUUID().toString();
-			_requestedAssociations.put(pKey, uniqueID);
+			_datastore.addRequestedAssociation(pKey, uniqueID);
 
-			// create JSON object with data
+			// create JSON object with response
 			JSONObject jo = new JSONObject();
 			jo.put("id", uniqueID);
 
@@ -101,84 +94,143 @@ public class SimpleHttpServer {
 		// receives JSON with
 		// 1. guardian's public key
 		// 2. uniqueID;
-		// 3. uniqueChildID
 		// to complete association with guardian
 
 		@Override
 		public void handle(HttpExchange he) throws IOException {
 			System.out.println("Received bind-confirmation request.");
 
-			// parse request
-			Map<String, Object> parameters = new HashMap<>();
+			// get request message
 			InputStreamReader isr = new InputStreamReader(he.getRequestBody(), "utf-8");
 			BufferedReader br = new BufferedReader(isr);
-			String query = br.readLine();
-			parseQuery(query, parameters);
+			String requestString = br.readLine();
+			System.out.println("Request string: " + requestString);
+			JSONObject request = new JSONObject(requestString);
 
 			// check parameters and complete association
-			String pKey = (String) parameters.get("key");
-			String uniqueID = (String) parameters.get("id");
-			String childID = (String) parameters.get("childID");
-			if (_requestedAssociations.containsKey(pKey) && _requestedAssociations.get(pKey).equals(uniqueID)) {
-				_requestedAssociations.remove(pKey);
-				_associations.put(uniqueID, pKey);
-				_children.put(childID, uniqueID);
+			String pKey = request.getString("publicKey");
+			System.out.println("PKey: " + pKey);
+			String uniqueId = request.getString("associationId");
+			System.out.println("Association: " + uniqueId);
+			String ack = "";
+			if (_datastore.hasRequestedAssociation(pKey) && _datastore.getRequestedAssociation(pKey).equals(uniqueId)) {
+				_datastore.removeRequestedAssociation(pKey);
+				_datastore.addAssociation(uniqueId, pKey);
+				ack = "Bind successful.";
+			}
+			else {
+				ack = "Bind unsuccessful.";
 			}
 
+			System.out.println("ACK: " + ack);
+
+			// create JSON object with ack response
+			JSONObject jo = new JSONObject();
+			jo.put("ack", ack);
+
 			// send response
-			he.sendResponseHeaders(200, -1);
+			String response = jo.toString();
+			he.getResponseHeaders().set("Content-Type", "application/json");
+			he.sendResponseHeaders(200, response.length());
+			OutputStream os = he.getResponseBody();
+			os.write(response.getBytes());
+			os.close();
 		}
 	}
 
-	//TODO: Henrique, faz a tua cena bro
-	public class ReceiveLocationHandler implements HttpHandler{
+
+	public class BindCheckHandler implements HttpHandler {
 		// receives JSON with
-		// 1. childID
-		// 2. Location object
-		// 3. Date string
-		// stores data (not yet)
+		// 1. associationId
+		// returns ack if association exists
+
 		@Override
-		public void handle(HttpExchange he) throws IOException{
-			System.out.println("ola");
+		public void handle(HttpExchange he) throws IOException {
+			System.out.println("Received bind-check request.");
+
+			// get request message
 			InputStreamReader isr = new InputStreamReader(he.getRequestBody(), "utf-8");
 			BufferedReader br = new BufferedReader(isr);
-			String request = br.readLine();
+			String requestString = br.readLine();
+			System.out.println("Request string: " + requestString);
+			JSONObject request = new JSONObject(requestString);
 
-			System.out.println(request);
-			he.sendResponseHeaders(200, -1);
+			// get associationId
+			String associationId = request.getString("associationId");
+			System.out.println("Association id: " + associationId);
+
+			// check if association exists
+			String ack = _datastore.hasAssociation(associationId) ? "Child was successfully associated." : "Child was not associated.";
+
+			System.out.println("Ack: " + ack);
+
+			// create JSON object with ack response
+			JSONObject jo = new JSONObject();
+			jo.put("ack", ack);
+			String response = jo.toString();
+
+			// send response
+			he.getResponseHeaders().set("Content-Type", "application/json");
+			he.sendResponseHeaders(200, response.length());
+			OutputStream os = he.getResponseBody();
+			os.write(response.getBytes());
+			os.close();
 		}
 	}
 
 
-	public class PostHandler implements HttpHandler {
+	public class PostLocationHandler implements HttpHandler {
 		// receives JSON with
-		// 1. childID
+		// 1. associationId
 		// 2. data
 		// stores data
 
 		@Override
 		public void handle(HttpExchange he) throws IOException {
-			// parse request
-			Map<String, Object> parameters = new HashMap<>();
+			System.out.println("Received post-location request.");
+
+			// get request message
 			InputStreamReader isr = new InputStreamReader(he.getRequestBody(), "utf-8");
 			BufferedReader br = new BufferedReader(isr);
-			String query = br.readLine();
-			parseQuery(query, parameters);
+			String requestString = br.readLine();
+			System.out.println("Request string: " + requestString);
+			JSONObject request = new JSONObject(requestString);
 
-			// get data and store it
-			String childID = (String) parameters.get("childID");
-			Byte[] data = (Byte[]) parameters.get("data");
-			String associationID = _children.get(childID);
-			_data.get(associationID).add(data);
+			// get associationId and data
+			String associationId = request.getString("associationId");
+			System.out.println("Association id: " + associationId);
+			String data = request.getString("data"); //64 base encoded ciphered
+			System.out.println("Data: " + data);
+
+			//store data
+			String ack = "";
+			if (_datastore.hasAssociation(associationId)) {
+				_datastore.addLocationData(associationId, data);
+				ack = "Location stored successfully.";
+			}
+			else {
+				ack = "Couldn't find association id, location was not stored.";
+			}
+
+			System.out.println("Ack: " + ack);
+
+			// create JSON object with ack response
+			JSONObject jo = new JSONObject();
+			jo.put("ack", ack);
+			String response = jo.toString();
 
 			// send response
-			he.sendResponseHeaders(200, -1);
+			he.getResponseHeaders().set("Content-Type", "application/json");
+			he.sendResponseHeaders(200, response.length());
+			OutputStream os = he.getResponseBody();
+			os.write(response.getBytes());
+			os.close();
 		}
 	}
 
 
-	public class GetHandler implements HttpHandler {
-		// returns latest data from a certain association
+	public class GetLocationHandler implements HttpHandler {
+		// returns latest data from a certain association given through url
 
 		@Override
 		public void handle(HttpExchange he) throws IOException {
@@ -190,17 +242,16 @@ public class SimpleHttpServer {
 			parseQuery(query, parameters);
 
 			// get data
-			String associationID = (String) parameters.get("association");
-			Byte[] data = _data.get(associationID).get(_data.get(associationID).size() - 1);
+			String associationId = (String) parameters.get("id");
+			ArrayList<String> data = _datastore.getData(associationId);
+			JSONArray jsArray = new JSONArray(data);
 
 			// create JSON object with data
-			JSONArray ja = new JSONArray();
 			JSONObject jo = new JSONObject();
-			jo.put("data", data);
-			ja.put(jo);
+			jo.put("locations", jsArray);
 
 			// send response
-			String response = ja.toString();
+			String response = jo.toString();
 			he.getResponseHeaders().set("Content-Type", "application/json");
 			he.sendResponseHeaders(200, response.length());
 			OutputStream os = he.getResponseBody();

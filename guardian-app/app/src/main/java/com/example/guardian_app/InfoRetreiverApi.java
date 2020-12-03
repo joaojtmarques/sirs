@@ -2,6 +2,8 @@ package com.example.guardian_app;
 
 import com.google.gson.JsonObject;
 
+import org.json.JSONObject;
+
 import java.util.List;
 
 import retrofit2.Call;
@@ -15,8 +17,8 @@ public interface InfoRetreiverApi {
     Call<List<Info>> getInfo();
 
     @POST("bind-request")
-    Call<JsonObject> createBindRequest(@Body String bindRequest);
+    Call<JsonObject> createBindRequest(@Body JsonObject bindRequest);
 
-    @GET("bind-was-successful")
-    Call<Boolean> wasBindSuccessful(@Body String bindCode);
+    @POST("bind-check")
+    Call<JsonObject> wasBindSuccessful(@Body JsonObject bindCode);
 }

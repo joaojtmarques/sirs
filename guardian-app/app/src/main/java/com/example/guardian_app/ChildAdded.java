@@ -32,6 +32,7 @@ public class ChildAdded extends AppCompatActivity{
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             dataStore = extras.getParcelable("dataStore");
+            childCode = extras.getString("childCode");
             System.out.println(dataStore.getChildNames());
         }
         textViewResult = (TextView)findViewById(R.id.text_view_result);
@@ -41,37 +42,39 @@ public class ChildAdded extends AppCompatActivity{
                 .create();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:9000/")
+                .baseUrl("http://144.64.187.232:9000/")
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
         infoRetreiverApi = retrofit.create(InfoRetreiverApi.class);
 
-        //wasBindSuccessful();
+        wasBindSuccessful();
 
-        textViewResult.setText("SUCCESS!");
+        //textViewResult.setText("SUCCESS!");
 
     }
 
     private void wasBindSuccessful() {
-        Call<Boolean> call = infoRetreiverApi.wasBindSuccessful("code");
-        call.enqueue(new Callback<Boolean>() {
+        JsonObject wasBindSuccessful = new JsonObject();
+        wasBindSuccessful.addProperty("associationId", childCode);
+
+        Call<JsonObject> call = infoRetreiverApi.wasBindSuccessful(wasBindSuccessful);
+        call.enqueue(new Callback<JsonObject>() {
             @SuppressLint("SetTextI18n")
             @Override
-            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
-                textViewResult.setText("code:" + response.code());
-                return;
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (!response.isSuccessful()) {
+                    System.out.println(response.code());
+                    return;
+                }
+                JsonObject jsonObject1 = response.body();
+
+                textViewResult.setText(jsonObject1.get("ack").getAsString());
+
             }
-            /*
-            if (response.body() == true) {
-                textViewResult.setText("Child was successfully added to the system!");
-            }
-            else {
-                textViewResult.setText("Something went wrong");
-            }
-            */
+
             @Override
-            public void onFailure(Call<Boolean> call, Throwable t) {
+            public void onFailure(Call<JsonObject> call, Throwable t) {
                 textViewResult.setText(t.getMessage());
             }
         });

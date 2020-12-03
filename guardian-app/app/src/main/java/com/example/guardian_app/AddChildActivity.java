@@ -68,12 +68,16 @@ public class AddChildActivity extends AppCompatActivity {
                 .create();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:9000/")
+                .baseUrl("http://144.64.187.232:9000/")
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
         infoRetreiverApi = retrofit.create(InfoRetreiverApi.class);
-        createBindRequest();
+        try {
+            createBindRequest();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
 
     }
@@ -84,13 +88,18 @@ public class AddChildActivity extends AppCompatActivity {
         dataStore.addAssociation(childName, childCode);
         System.out.println(dataStore.getChildNames());
         intent.putExtra("dataStore", dataStore);
+        intent.putExtra("childCode", childCode);
         startActivity(intent);
     }
 
 
 
-    private void createBindRequest() {
-        Call<JsonObject> call = infoRetreiverApi.createBindRequest("mamasMamas");
+    private void createBindRequest() throws JSONException {
+        String messageToSend = "publicKeyhuererere";
+        JsonObject bindRequest = new JsonObject();
+        bindRequest.addProperty("publicKey", messageToSend);
+        System.out.println(bindRequest.toString());
+        Call<JsonObject> call = infoRetreiverApi.createBindRequest(bindRequest);
         call.enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {

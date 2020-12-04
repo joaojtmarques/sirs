@@ -1,4 +1,4 @@
-package com.happylife.demo;
+package com.server;
 
 public class Info {
 

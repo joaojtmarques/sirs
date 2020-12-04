@@ -1,31 +1,24 @@
-package com.example.guardian_app;
+package com.example.guardian_app.Activities;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.guardian_app.Domain.DataStore;
+import com.example.guardian_app.RetrofitAPI.InfoRetreiverApi;
+import com.example.guardian_app.R;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.common.BitMatrix;
-import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import retrofit2.Call;
 import retrofit2.Callback;

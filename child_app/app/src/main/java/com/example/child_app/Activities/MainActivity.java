@@ -1,4 +1,4 @@
-package com.example.child_app;
+package com.example.child_app.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -8,7 +8,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-
+import com.example.child_app.Activities.LocationActivity;
+import com.example.child_app.Activities.ReadQrCode;
+import com.example.child_app.R;
 
 
 public class MainActivity extends AppCompatActivity {

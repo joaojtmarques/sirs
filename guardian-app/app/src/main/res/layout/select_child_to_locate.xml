@@ -7,14 +7,21 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    tools:context=".Activities.ChildAdded">
+    tools:context=".Activities.SelectChildToLocate">
 
     <TextView
-        android:id="@+id/text_view_result"
-        android:layout_height="wrap_content"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:textColor="#000"
-        android:textSize="18sp"/>
+        android:textSize="18sp"
+        android:text="Select which child you want to locate"/>
+
+
+    <ListView
+        android:id="@+id/list_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"/>
 
     <Button
         android:id="@+id/submitButton"
@@ -24,6 +31,7 @@
         android:gravity="center"
         android:textSize="22sp"
         android:layout_marginTop="20dp"
-        android:onClick="goToMainActivity"/>
+        android:onClick="goToCheckChildLocation"/>
+
 
 </LinearLayout>

@@ -1,4 +1,4 @@
-package com.example.guardian_app;
+package com.example.guardian_app.RetrofitAPI;
 
 import com.google.gson.JsonObject;
 
@@ -10,11 +10,13 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface InfoRetreiverApi {
 
-    @GET("infos")
-    Call<List<Info>> getInfo();
+    @GET("get-location")
+    Call<JsonObject> getLocation(@Query("id") String associationId);
 
     @POST("bind-request")
     Call<JsonObject> createBindRequest(@Body JsonObject bindRequest);

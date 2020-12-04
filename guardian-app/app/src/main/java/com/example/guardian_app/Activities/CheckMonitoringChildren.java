@@ -1,11 +1,12 @@
-package com.example.guardian_app;
+package com.example.guardian_app.Activities;
 
-import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.guardian_app.R;
 
 public class CheckMonitoringChildren extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {

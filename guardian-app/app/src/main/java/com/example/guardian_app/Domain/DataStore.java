@@ -1,4 +1,4 @@
-package com.example.guardian_app;
+package com.example.guardian_app.Domain;
 
 import android.os.Parcel;
 import android.os.Parcelable;

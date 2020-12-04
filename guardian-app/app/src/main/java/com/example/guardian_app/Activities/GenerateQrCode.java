@@ -1,28 +1,22 @@
-package com.example.guardian_app;
+package com.example.guardian_app.Activities;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.example.guardian_app.Domain.DataStore;
+import com.example.guardian_app.RetrofitAPI.InfoRetreiverApi;
+import com.example.guardian_app.R;
 import com.google.gson.JsonObject;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class GenerateQrCode extends AppCompatActivity {
 

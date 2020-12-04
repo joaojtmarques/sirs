@@ -1,25 +1,14 @@
-package com.example.guardian_app;
+package com.example.guardian_app.Activities;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import com.example.guardian_app.Domain.DataStore;
+import com.example.guardian_app.R;
 
 public class MainActivity extends AppCompatActivity {
     private DataStore dataStore;
@@ -60,7 +49,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void goToCheckChildLocation(View view){
-        Intent intent = new Intent(this, CheckChildLocation.class);
+        Intent intent = new Intent(this, SelectChildToLocate.class);
+        intent.putExtra("dataStore", dataStore);
         startActivity(intent);
     }
 

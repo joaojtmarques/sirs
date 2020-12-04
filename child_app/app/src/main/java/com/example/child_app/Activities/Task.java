@@ -1,4 +1,4 @@
-package com.example.child_app;
+package com.example.child_app.Activities;
 
 public class Task extends java.util.TimerTask{
     private LocationActivity activity;

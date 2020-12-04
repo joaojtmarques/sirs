@@ -12,29 +12,29 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Guardianapp"
         android:usesCleartextTraffic="true">
-        <activity android:name=".MainActivity"
-            >
+        <activity android:name=".Activities.CheckChildLocation"></activity>
+        <activity android:name=".Activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AddChildActivity"
-            android:parentActivityName=".MainActivity">
-        </activity>
-        <activity android:name=".GenerateQrCode"
-            android:parentActivityName=".AddChildActivity">
-        </activity>
-        <activity android:name=".ChildAdded"
-            android:parentActivityName=".GenerateQrCode">
-        </activity>
-        <activity android:name=".CheckMonitoringChildren"
-            android:parentActivityName=".MainActivity">
-        </activity>
-        <activity android:name=".CheckChildLocation"
-            android:parentActivityName=".MainActivity">
-        </activity>
+        <activity
+            android:name=".Activities.AddChildActivity"
+            android:parentActivityName=".Activities.MainActivity"></activity>
+        <activity
+            android:name=".Activities.GenerateQrCode"
+            android:parentActivityName=".Activities.AddChildActivity"></activity>
+        <activity
+            android:name=".Activities.ChildAdded"
+            android:parentActivityName=".Activities.GenerateQrCode"></activity>
+        <activity
+            android:name=".Activities.CheckMonitoringChildren"
+            android:parentActivityName=".Activities.MainActivity"></activity>
+        <activity
+            android:name=".Activities.SelectChildToLocate"
+            android:parentActivityName=".Activities.MainActivity"></activity>
     </application>
 
 </manifest>

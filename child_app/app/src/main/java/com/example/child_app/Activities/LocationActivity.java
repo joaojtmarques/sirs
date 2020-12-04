@@ -1,4 +1,4 @@
-package com.example.child_app;
+package com.example.child_app.Activities;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,13 +13,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.example.child_app.RetrofitAPI.CommunicationInterface;
+import com.example.child_app.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.JsonObject;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.Date;
 import java.util.Timer;

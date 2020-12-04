@@ -24,8 +24,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Child_app"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ScanCodeActivity"></activity>
-        <activity android:name=".MainActivity">
+        <activity android:name=".Activities.ScanCodeActivity"></activity>
+        <activity android:name=".Activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -33,11 +33,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LocationActivity"
-            android:parentActivityName=".MainActivity"></activity>
+            android:name=".Activities.LocationActivity"
+            android:parentActivityName=".Activities.MainActivity"></activity>
         <activity
-            android:name=".ReadQrCode"
-            android:parentActivityName=".MainActivity"></activity>
+            android:name=".Activities.ReadQrCode"
+            android:parentActivityName=".Activities.MainActivity"></activity>
     </application>
 
 </manifest>

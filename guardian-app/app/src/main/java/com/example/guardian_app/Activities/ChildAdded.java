@@ -1,4 +1,4 @@
-package com.example.guardian_app;
+package com.example.guardian_app.Activities;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -8,6 +8,9 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.guardian_app.Domain.DataStore;
+import com.example.guardian_app.RetrofitAPI.InfoRetreiverApi;
+import com.example.guardian_app.R;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;

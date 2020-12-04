@@ -1,8 +1,7 @@
-package com.example.child_app;
+package com.example.child_app.Activities;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -10,8 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 
 import com.google.zxing.Result;
-
-import java.util.Scanner;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 

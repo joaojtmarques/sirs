@@ -60,8 +60,8 @@ public class SimpleHttpServer {
 
 		@Override
 		public void handle(HttpExchange he) throws IOException {
-			System.out.println("Received bind-request request.");
-			System.out.println("Request IP:" + he.getRemoteAddress());
+			System.out.println("-> Received bind-request request.");
+			System.out.println("\t- Request IP:" + he.getRemoteAddress());
 
 			// get request message
 			InputStreamReader isr = new InputStreamReader(he.getRequestBody(), "utf-8");
@@ -71,7 +71,7 @@ public class SimpleHttpServer {
 
 			// add key to requestedAssociations
 			String pKey = request.getString("publicKey");
-			System.out.println("PublicKey: " + pKey);
+			System.out.println("\t- PublicKey: " + pKey);
 			String uniqueID = UUID.randomUUID().toString();
 			_datastore.addRequestedAssociation(pKey, uniqueID);
 
@@ -98,20 +98,20 @@ public class SimpleHttpServer {
 
 		@Override
 		public void handle(HttpExchange he) throws IOException {
-			System.out.println("Received bind-confirmation request.");
+			System.out.println("-> Received bind-confirmation request.");
 
 			// get request message
 			InputStreamReader isr = new InputStreamReader(he.getRequestBody(), "utf-8");
 			BufferedReader br = new BufferedReader(isr);
 			String requestString = br.readLine();
-			System.out.println("Request string: " + requestString);
+			System.out.println("\t- Request string: " + requestString);
 			JSONObject request = new JSONObject(requestString);
 
 			// check parameters and complete association
 			String pKey = request.getString("publicKey");
-			System.out.println("PKey: " + pKey);
+			System.out.println("\t- PKey: " + pKey);
 			String uniqueId = request.getString("associationId");
-			System.out.println("Association: " + uniqueId);
+			System.out.println("\t- Association: " + uniqueId);
 			String ack = "";
 			if (_datastore.hasRequestedAssociation(pKey) && _datastore.getRequestedAssociation(pKey).equals(uniqueId)) {
 				_datastore.removeRequestedAssociation(pKey);
@@ -122,7 +122,7 @@ public class SimpleHttpServer {
 				ack = "Bind unsuccessful.";
 			}
 
-			System.out.println("ACK: " + ack);
+			System.out.println("\t- ACK: " + ack);
 
 			// create JSON object with ack response
 			JSONObject jo = new JSONObject();
@@ -146,23 +146,23 @@ public class SimpleHttpServer {
 
 		@Override
 		public void handle(HttpExchange he) throws IOException {
-			System.out.println("Received bind-check request.");
+			System.out.println("-> Received bind-check request.");
 
 			// get request message
 			InputStreamReader isr = new InputStreamReader(he.getRequestBody(), "utf-8");
 			BufferedReader br = new BufferedReader(isr);
 			String requestString = br.readLine();
-			System.out.println("Request string: " + requestString);
+			System.out.println("\t- Request string: " + requestString);
 			JSONObject request = new JSONObject(requestString);
 
 			// get associationId
 			String associationId = request.getString("associationId");
-			System.out.println("Association id: " + associationId);
+			System.out.println("\t- Association id: " + associationId);
 
 			// check if association exists
 			String ack = _datastore.hasAssociation(associationId) ? "Child was successfully associated." : "Child was not associated.";
 
-			System.out.println("Ack: " + ack);
+			System.out.println("\t- Ack: " + ack);
 
 			// create JSON object with ack response
 			JSONObject jo = new JSONObject();
@@ -187,20 +187,20 @@ public class SimpleHttpServer {
 
 		@Override
 		public void handle(HttpExchange he) throws IOException {
-			System.out.println("Received post-location request.");
+			System.out.println("-> Received post-location request.");
 
 			// get request message
 			InputStreamReader isr = new InputStreamReader(he.getRequestBody(), "utf-8");
 			BufferedReader br = new BufferedReader(isr);
 			String requestString = br.readLine();
-			System.out.println("Request string: " + requestString);
+			System.out.println("\t- Request string: " + requestString);
 			JSONObject request = new JSONObject(requestString);
 
 			// get associationId and data
 			String associationId = request.getString("associationId");
-			System.out.println("Association id: " + associationId);
+			System.out.println("\t- Association id: " + associationId);
 			String data = request.getString("data"); //64 base encoded ciphered
-			System.out.println("Data: " + data);
+			System.out.println("\t- Data: " + data);
 
 			//store data
 			String ack = "";
@@ -212,7 +212,7 @@ public class SimpleHttpServer {
 				ack = "Couldn't find association id, location was not stored.";
 			}
 
-			System.out.println("Ack: " + ack);
+			System.out.println("\t- Ack: " + ack);
 
 			// create JSON object with ack response
 			JSONObject jo = new JSONObject();
@@ -234,21 +234,29 @@ public class SimpleHttpServer {
 
 		@Override
 		public void handle(HttpExchange he) throws IOException {
+			System.out.println("-> Received get-location request.");
+
 			// parse request
 			Map<String, Object> parameters = new HashMap<>();
-			InputStreamReader isr = new InputStreamReader(he.getRequestBody(), "utf-8");
-			BufferedReader br = new BufferedReader(isr);
-			String query = br.readLine();
+			URI requestedUri = he.getRequestURI();
+			String query = requestedUri.getRawQuery();
 			parseQuery(query, parameters);
 
 			// get data
 			String associationId = (String) parameters.get("id");
 			ArrayList<String> data = _datastore.getData(associationId);
-			JSONArray jsArray = new JSONArray(data);
 
 			// create JSON object with data
 			JSONObject jo = new JSONObject();
+			JSONArray jsArray = new JSONArray();
+			for (String s : data) {
+				JSONObject loc = new JSONObject();
+				loc.put("value", s);
+				jsArray.put(loc);
+			}
 			jo.put("locations", jsArray);
+
+			System.out.println("\t- Locations: " + jo.toString());
 
 			// send response
 			String response = jo.toString();
@@ -259,7 +267,6 @@ public class SimpleHttpServer {
 			os.close();
 		}
 	}
-
 
 	@SuppressWarnings("unchecked")
 	public void parseQuery(String query, Map<String, Object> parameters) throws UnsupportedEncodingException {

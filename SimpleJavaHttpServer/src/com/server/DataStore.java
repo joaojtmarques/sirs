@@ -1,4 +1,4 @@
-package com.happylife.demo;
+package com.server;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package com.happylife.demo;
+package com.server;
 
 public class Main {
 	public static int port = 9000;

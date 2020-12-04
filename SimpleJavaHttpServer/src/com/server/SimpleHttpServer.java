@@ -1,4 +1,4 @@
-package com.happylife.demo;
+package com.server;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,15 +10,12 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.util.*;
 
-import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import javax.xml.*;
 
 public class SimpleHttpServer {
 	private int port;

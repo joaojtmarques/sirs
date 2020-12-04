@@ -1,4 +1,4 @@
-package com.happylife.demo;
+package com.server;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -104,7 +104,7 @@ public class SimpleHttpsServer {
 	}
 
 	private String getPath() {
-		return this.getClass().getClassLoader().getResource("").getPath() + "com/happylife/demo/";
+		return this.getClass().getClassLoader().getResource("").getPath() + "com/server/";
 	}
 
 	public void Stop() {

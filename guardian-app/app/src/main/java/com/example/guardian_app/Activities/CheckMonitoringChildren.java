@@ -12,7 +12,6 @@ public class CheckMonitoringChildren extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.check_monitoring_children);
-        System.out.println("here");
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 

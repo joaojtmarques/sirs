@@ -25,7 +25,6 @@ public class ChildAdded extends AppCompatActivity{
     private TextView textViewResult;
     private InfoRetreiverApi infoRetreiverApi;
     private DataStore dataStore;
-    private String childName;
     private String childCode;
 
 
@@ -36,7 +35,6 @@ public class ChildAdded extends AppCompatActivity{
         if (extras != null) {
             dataStore = extras.getParcelable("dataStore");
             childCode = extras.getString("childCode");
-            System.out.println(dataStore.getChildNames());
         }
         textViewResult = (TextView)findViewById(R.id.text_view_result);
 
@@ -52,9 +50,6 @@ public class ChildAdded extends AppCompatActivity{
         infoRetreiverApi = retrofit.create(InfoRetreiverApi.class);
 
         wasBindSuccessful();
-
-        //textViewResult.setText("SUCCESS!");
-
     }
 
     private void wasBindSuccessful() {
@@ -86,7 +81,6 @@ public class ChildAdded extends AppCompatActivity{
 
     public void goToMainActivity (View view){
         Intent intent = new Intent(this, MainActivity.class);
-        System.out.println(dataStore.getChildNames());
         intent.putExtra("dataStore", dataStore);
         startActivity(intent);
     }

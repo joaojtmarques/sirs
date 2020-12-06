@@ -1,8 +1,10 @@
 package com.example.guardian_app.Activities;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -10,13 +12,15 @@ import android.view.View;
 import com.example.guardian_app.Domain.DataStore;
 import com.example.guardian_app.R;
 
+import java.util.Base64;
+
 public class MainActivity extends AppCompatActivity {
     private DataStore dataStore;
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i("onCreate", "on Create!!!");
 
         setContentView(R.layout.activity_main);
 
@@ -27,20 +31,16 @@ public class MainActivity extends AppCompatActivity {
         }
         else {
             dataStore = new DataStore();
-            System.out.println(extras);
         }
-
-        System.out.println("here");
-
-        System.out.println(dataStore.getChildNames());
 
 
     }
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void goToAddChild (View view){
         Intent intent = new Intent(this, AddChildActivity.class);
         intent.putExtra("dataStore", dataStore);
+        intent.putExtra("publicKey", dataStore.getPublicKeyAsString());
         startActivity(intent);
-        //finish();
     }
 
     public void goToCheckMonitoringChildren (View view){
@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     public void goToCheckChildLocation(View view){
         Intent intent = new Intent(this, SelectChildToLocate.class);
         intent.putExtra("dataStore", dataStore);
+        intent.putExtra("privateKey", dataStore.getPrivateKey());
         startActivity(intent);
     }
 

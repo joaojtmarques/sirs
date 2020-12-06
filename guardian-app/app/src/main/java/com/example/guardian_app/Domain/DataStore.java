@@ -1,18 +1,31 @@
 package com.example.guardian_app.Domain;
 
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.RequiresApi;
+
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Set;
 
 public class DataStore implements Parcelable {
 
     private HashMap<String, String> _association;
+    private static PublicKey publicKey;
+    private static PrivateKey privateKey;
 
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public DataStore() {
         _association = new HashMap<String, String>();
+        createKeys();
     }
 
     public void addAssociation(String childName, String id) {
@@ -53,4 +66,37 @@ public class DataStore implements Parcelable {
             return new DataStore[size];
         }
     };
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void createKeys() {
+        try {
+            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+            keyGen.initialize(2048);
+            KeyPair pair = keyGen.generateKeyPair();
+            this.privateKey = pair.getPrivate();
+            this.publicKey = pair.getPublic();
+        }
+        catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public PublicKey getPublicKey() {
+        return publicKey;
+    }
+
+    public PrivateKey getPrivateKey() {
+        return privateKey;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public String getPublicKeyAsString() {
+        return  Base64.getEncoder().encodeToString(publicKey.getEncoded());
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public String getPrivateKeyAsString() {
+        return  Base64.getEncoder().encodeToString(privateKey.getEncoded());
+    }
 }

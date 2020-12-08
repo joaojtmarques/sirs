@@ -11,15 +11,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.guardian_app.Domain.DataStore;
 import com.example.guardian_app.RetrofitAPI.InfoRetreiverApi;
 import com.example.guardian_app.R;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.example.guardian_app.RetrofitAPI.RetrofitCreator;
 import com.google.gson.JsonObject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ChildAdded extends AppCompatActivity{
     private TextView textViewResult;
@@ -38,16 +35,7 @@ public class ChildAdded extends AppCompatActivity{
         }
         textViewResult = (TextView)findViewById(R.id.text_view_result);
 
-        Gson gson = new GsonBuilder()
-                .setLenient()
-                .create();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://144.64.187.232:9000/")
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-
-        infoRetreiverApi = retrofit.create(InfoRetreiverApi.class);
+        infoRetreiverApi = RetrofitCreator.retrofitApiCreator();
 
         wasBindSuccessful();
     }

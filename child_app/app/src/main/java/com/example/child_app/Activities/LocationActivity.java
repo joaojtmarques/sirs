@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.example.child_app.RetrofitAPI.CommunicationInterface;
 import com.example.child_app.R;
+import com.example.child_app.RetrofitAPI.RetrofitCreator;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -71,12 +72,7 @@ public class LocationActivity extends AppCompatActivity {
             guardiansPublicKey = extras.getString("publicKey");
         }
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://144.64.187.232:9000/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        communicationInterface = retrofit.create(CommunicationInterface.class);
+        communicationInterface = RetrofitCreator.retrofitApiCreator();
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         t = findViewById(R.id.locationText);

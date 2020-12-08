@@ -18,13 +18,21 @@
         />
 
     <Button
-        android:id="@+id/submitButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="OK"
+        android:text="Update Location"
         android:gravity="center"
         android:textSize="22sp"
         android:layout_marginTop="20dp"
+        android:onClick="updateLocation"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Return to Main"
+        android:gravity="center"
+        android:textSize="22sp"
+        android:layout_marginTop="100dp"
         android:onClick="goToMainActivity"/>
 
 </LinearLayout>

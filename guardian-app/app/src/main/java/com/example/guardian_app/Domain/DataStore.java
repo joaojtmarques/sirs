@@ -21,11 +21,18 @@ public class DataStore implements Parcelable {
     private static PublicKey publicKey;
     private static PrivateKey privateKey;
 
+    private static float _latitude;
+    private static float _longitude;
+    private static int _range;
+
+    private static boolean _hasSafeZone;
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public DataStore() {
         _association = new HashMap<String, String>();
         createKeys();
+        deleteSafeZone();
     }
 
     public void addAssociation(String childName, String id) {
@@ -79,7 +86,6 @@ public class DataStore implements Parcelable {
         catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-
     }
 
     public PublicKey getPublicKey() {
@@ -98,5 +104,42 @@ public class DataStore implements Parcelable {
     @RequiresApi(api = Build.VERSION_CODES.O)
     public String getPrivateKeyAsString() {
         return  Base64.getEncoder().encodeToString(privateKey.getEncoded());
+    }
+
+
+    public float getLatitude() {
+        return _latitude;
+    }
+
+    public void setLatitude(float latitude) {
+        _latitude = latitude;
+    }
+
+    public float getLongitude() {
+        return _longitude;
+    }
+
+    public void setLongitude(float longitude) {
+        _longitude = longitude;
+    }
+
+    public int getRange() {
+        return _range;
+    }
+
+    public void setRange(int range) {
+        _range = range;
+    }
+
+    public boolean hasSafeZoneDefined() {
+        return _hasSafeZone;
+    }
+
+    public void defineSafeZone() {
+        _hasSafeZone = true;
+    }
+
+    public void deleteSafeZone() {
+        _hasSafeZone = false;
     }
 }

@@ -30,7 +30,7 @@
             android:name=".Activities.ChildAdded"
             android:parentActivityName=".Activities.GenerateQrCode"></activity>
         <activity
-            android:name=".Activities.CheckMonitoringChildren"
+            android:name=".Activities.DefineSafeZone"
             android:parentActivityName=".Activities.MainActivity"></activity>
         <activity
             android:name=".Activities.SelectChildToLocate"

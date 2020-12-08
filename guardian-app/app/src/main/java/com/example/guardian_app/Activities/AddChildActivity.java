@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,21 +14,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.guardian_app.Domain.DataStore;
 import com.example.guardian_app.RetrofitAPI.InfoRetreiverApi;
 import com.example.guardian_app.R;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.example.guardian_app.RetrofitAPI.RetrofitCreator;
 import com.google.gson.JsonObject;
 
 
 import org.json.JSONException;
 
-import java.security.PublicKey;
-import java.util.Base64;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class AddChildActivity extends AppCompatActivity {
     private InfoRetreiverApi infoRetreiverApi;
@@ -58,16 +51,8 @@ public class AddChildActivity extends AppCompatActivity {
         nameInput = (EditText) findViewById(R.id.childsName);
         submitButton = (Button) findViewById(R.id.submitButton);
 
-        Gson gson = new GsonBuilder()
-                .setLenient()
-                .create();
+        infoRetreiverApi = RetrofitCreator.retrofitApiCreator();
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://144.64.187.232:9000/")
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-
-        infoRetreiverApi = retrofit.create(InfoRetreiverApi.class);
         try {
             createBindRequest();
         } catch (JSONException e) {
@@ -79,12 +64,17 @@ public class AddChildActivity extends AppCompatActivity {
 
     public void goToGenerateQrCode (View view){
         childName = nameInput.getText().toString();
-        Intent intent = new Intent(this, GenerateQrCode.class);
-        dataStore.addAssociation(childName, childCode);
-        intent.putExtra("dataStore", dataStore);
-        intent.putExtra("childCode", childCode);
-        intent.putExtra("publicKey", publicKey);
-        startActivity(intent);
+        if (childName.isEmpty()) {
+            nameInput.setError("Field cannot be empty!");
+        }
+        else {
+            Intent intent = new Intent(this, GenerateQrCode.class);
+            dataStore.addAssociation(childName, childCode);
+            intent.putExtra("dataStore", dataStore);
+            intent.putExtra("childCode", childCode);
+            intent.putExtra("publicKey", publicKey);
+            startActivity(intent);
+        }
     }
 
 

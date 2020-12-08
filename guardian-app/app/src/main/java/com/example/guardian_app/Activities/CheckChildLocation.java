@@ -13,22 +13,13 @@ import android.widget.TextView;
 import com.example.guardian_app.Domain.DataStore;
 import com.example.guardian_app.RetrofitAPI.InfoRetreiverApi;
 import com.example.guardian_app.R;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
+import com.example.guardian_app.RetrofitAPI.RetrofitCreator;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonPrimitive;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.security.InvalidKeyException;
-import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
 import javax.crypto.BadPaddingException;
@@ -41,8 +32,6 @@ import javax.crypto.spec.SecretKeySpec;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class CheckChildLocation extends AppCompatActivity {
     private DataStore dataStore;
@@ -69,21 +58,12 @@ public class CheckChildLocation extends AppCompatActivity {
 
         textViewresult = (TextView) findViewById(R.id.text_view_result);
 
-        Gson gson = new GsonBuilder()
-                .setLenient()
-                .create();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://144.64.187.232:9000/")
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-
-        infoRetreiverApi = retrofit.create(InfoRetreiverApi.class);
+        infoRetreiverApi = RetrofitCreator.retrofitApiCreator();
 
         getChildLocation(childrenIdToLocate);
     }
 
-    private void getChildLocation(String childrenIdToLocate) {
+    public void getChildLocation(String childrenIdToLocate) {
 
         Call<JsonObject> call = infoRetreiverApi.getLocation(childrenIdToLocate);
         call.enqueue(new Callback<JsonObject>() {
@@ -121,6 +101,10 @@ public class CheckChildLocation extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void updateLocation(View view) {
+        getChildLocation(childrenIdToLocate);
     }
 
     public void goToMainActivity(View view) {
@@ -183,5 +167,9 @@ public class CheckChildLocation extends AppCompatActivity {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public String getChildrenIdToLocate() {
+        return childrenIdToLocate;
     }
 }

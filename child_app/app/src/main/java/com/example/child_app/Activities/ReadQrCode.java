@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.child_app.RetrofitAPI.CommunicationInterface;
 import com.example.child_app.R;
+import com.example.child_app.RetrofitAPI.RetrofitCreator;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -51,16 +52,9 @@ public class ReadQrCode extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (!resultTextView.getText().toString().equals("Result")) {
-            Gson gson = new GsonBuilder()
-                    .setLenient()
-                    .create();
 
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("http://144.64.187.232:9000/")
-                    .addConverterFactory(GsonConverterFactory.create(gson))
-                    .build();
+            communicationInterface = RetrofitCreator.retrofitApiCreator();
 
-            communicationInterface = retrofit.create(CommunicationInterface.class);
             createBindRequest(resultTextView.getText().toString());
         }
 

@@ -53,7 +53,7 @@ public class ReadQrCode extends AppCompatActivity {
         super.onResume();
         if (!resultTextView.getText().toString().equals("Result")) {
 
-            communicationInterface = RetrofitCreator.retrofitApiCreator();
+            communicationInterface = RetrofitCreator.retrofitApiCreator(getApplicationContext());
 
             createBindRequest(resultTextView.getText().toString());
         }

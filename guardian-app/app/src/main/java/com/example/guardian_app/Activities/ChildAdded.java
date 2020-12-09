@@ -35,7 +35,7 @@ public class ChildAdded extends AppCompatActivity{
         }
         textViewResult = (TextView)findViewById(R.id.text_view_result);
 
-        infoRetreiverApi = RetrofitCreator.retrofitApiCreator();
+        infoRetreiverApi = RetrofitCreator.retrofitApiCreator(getApplicationContext());
 
         wasBindSuccessful();
     }

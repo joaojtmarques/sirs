@@ -13,6 +13,8 @@ import com.example.guardian_app.Dialogs.ZoneDefinedDialog;
 import com.example.guardian_app.Domain.DataStore;
 import com.example.guardian_app.R;
 
+import java.util.ArrayList;
+
 public class DefineSafeZone extends AppCompatActivity implements ZoneDefinedDialog.DialogListener {
     private DataStore dataStore;
     private Button button;
@@ -23,7 +25,8 @@ public class DefineSafeZone extends AppCompatActivity implements ZoneDefinedDial
 
     private float latitude;
     private float longitude;
-    private int range;
+    private float range;
+    private String childChosen;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +37,7 @@ public class DefineSafeZone extends AppCompatActivity implements ZoneDefinedDial
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             dataStore = extras.getParcelable("dataStore");
+            childChosen = extras.getString("childChosen");
         }
         latitudeText = (EditText) findViewById(R.id.latitude);
         longitudeText = (EditText) findViewById(R.id.longitude);
@@ -100,7 +104,7 @@ public class DefineSafeZone extends AppCompatActivity implements ZoneDefinedDial
         }
         else {
             try {
-                range = Integer.parseInt(rangeInput);
+                range = Float.parseFloat(rangeInput);
             }
             catch (NumberFormatException e) {
                 rangeText.setError("Value must be an Integer");
@@ -134,10 +138,11 @@ public class DefineSafeZone extends AppCompatActivity implements ZoneDefinedDial
     }
 
     private void saveSafeZone() {
-        dataStore.setLatitude(latitude);
-        dataStore.setLongitude(longitude);
-        dataStore.setRange(range);
-        dataStore.defineSafeZone();
+        ArrayList<Float> safeZone = new ArrayList<Float>();
+        safeZone.add(latitude);
+        safeZone.add(longitude);
+        safeZone.add(range);
+        dataStore.addSafeZone(childChosen, safeZone);
     }
 
 }

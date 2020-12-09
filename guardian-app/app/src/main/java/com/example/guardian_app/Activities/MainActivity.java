@@ -9,9 +9,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
-import com.example.guardian_app.Dialogs.ZoneAlreadyDefinedDialog;
 import com.example.guardian_app.Domain.DataStore;
 import com.example.guardian_app.Domain.CipherHandling;
 import com.example.guardian_app.R;
@@ -20,6 +20,7 @@ import com.example.guardian_app.RetrofitAPI.RetrofitCreator;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -28,84 +29,78 @@ import javax.crypto.SecretKey;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
 
-public class MainActivity extends AppCompatActivity implements ZoneAlreadyDefinedDialog.DefinedDialogListener{
+public class MainActivity extends AppCompatActivity {
     private DataStore dataStore;
     private Timer timer;
     private TimerTask task;
-    private CipherHandling locationRequestHandler;
     private InfoRetreiverApi infoRetreiverApi;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Log.i("onCreate" , "On Create!");
         setContentView(R.layout.activity_main);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             dataStore = extras.getParcelable("dataStore");
-            System.out.println("Latitude: " + dataStore.getLatitude());
-            System.out.println("Longitude: " + dataStore.getLongitude());
-            System.out.println("Range: " + dataStore.getRange());
-
+            System.out.println("Is safe Zone empty: " + dataStore.isSafeZoneMapEmpty());
         }
         else {
             dataStore = new DataStore();
         }
-        if (dataStore.getChildNames().size() > 0 && dataStore.hasSafeZoneDefined()) {
+        if (dataStore.getChildNames().size() > 0 && !dataStore.isSafeZoneMapEmpty()) {
             handleLocationRequestsOnBackground();
         }
 
 
     }
+
+    @Override
+    protected void onResume() {
+        Log.i("onResume" , "On Resume!");
+        super.onResume();
+        System.out.println(dataStore.getChildNames());
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void goToAddChild (View view){
+        if (task != null && timer != null) {
+            task.cancel();
+            timer.cancel();
+        }
+
         Intent intent = new Intent(this, AddChildActivity.class);
         intent.putExtra("dataStore", dataStore);
         intent.putExtra("publicKey", dataStore.getPublicKeyAsString());
         startActivity(intent);
     }
 
-    public void goToDefineSafeZone(View view){
-        if (dataStore.hasSafeZoneDefined()) {
-            openDialog();
+    public void goToSelectChildForSafeZone(View view){
+        if (task != null && timer != null) {
+            task.cancel();
+            timer.cancel();
         }
-        else {
-            Intent intent = new Intent(this, DefineSafeZone.class);
-            intent.putExtra("dataStore", dataStore);
-            startActivity(intent);
-        }
-
+        Intent intent = new Intent(this, SelectChildForSafeZone.class);
+        intent.putExtra("dataStore", dataStore);
+        startActivity(intent);
     }
 
     public void goToCheckChildLocation(View view){
+        if (task != null && timer != null) {
+            task.cancel();
+            timer.cancel();
+        }
         Intent intent = new Intent(this, SelectChildToLocate.class);
         intent.putExtra("dataStore", dataStore);
         intent.putExtra("privateKey", dataStore.getPrivateKey());
         startActivity(intent);
     }
 
-    @Override
-    public void okButtonPressed() {
-        dataStore.deleteSafeZone();
-        task.cancel();
-        timer.cancel();
-        Intent intent = new Intent(this, DefineSafeZone.class);
-        intent.putExtra("dataStore", dataStore);
-        startActivity(intent);
-    }
 
-    @Override
-    public void cancelButtonPressed() {
-
-    }
-
-    public void openDialog() {
-        ZoneAlreadyDefinedDialog dialog = new ZoneAlreadyDefinedDialog();
-        dialog.show(getSupportFragmentManager(), "dialog");
-    }
 
     private void handleLocationRequestsOnBackground() {
         timer = new Timer();
@@ -119,15 +114,15 @@ public class MainActivity extends AppCompatActivity implements ZoneAlreadyDefine
     //------------------------------------------------------------
 
     public void getEveryChildLocation() {
-        infoRetreiverApi = RetrofitCreator.retrofitApiCreator();
+        infoRetreiverApi = RetrofitCreator.retrofitApiCreator(getApplicationContext());
         for (String child: (dataStore.getChildNames())) {
-            getChildLocation(dataStore.getAssociationByChildName(child));
+            getChildLocation(child);
         }
     }
 
-    public void getChildLocation(String childrenIdToLocate) {
+    public void getChildLocation(String childName) {
 
-        Call<JsonObject> call = infoRetreiverApi.getLocation(childrenIdToLocate);
+        Call<JsonObject> call = infoRetreiverApi.getLocation(dataStore.getAssociationByChildName(childName));
         call.enqueue(new Callback<JsonObject>() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @SuppressLint("SetTextI18n")
@@ -152,8 +147,8 @@ public class MainActivity extends AppCompatActivity implements ZoneAlreadyDefine
                 String location = CipherHandling.decipherData(secretKey, data);
 
                 String content = "Last known location about your child: " + location;
-                if (dataStore.hasSafeZoneDefined()) {
-                    checkIfLocationIsSafe(location);
+                if (dataStore.getSafeZoneByChildName(childName) != null) {
+                    checkIfLocationIsSafe(location, childName);
                 }
 
                 System.out.println(content);
@@ -168,16 +163,17 @@ public class MainActivity extends AppCompatActivity implements ZoneAlreadyDefine
 
     }
 
-    private void checkIfLocationIsSafe(String message) {
+    private void checkIfLocationIsSafe(String message, String childName) {
         String[] arrOfStr = message.split("\n");
         String[] location = arrOfStr[1].split(" ");
         float latitude = Float.parseFloat(location[0].substring(0, location[0].length()-1).replace(",", "."));
         float longitude = Float.parseFloat(location[1].replace(",", "."));
+        ArrayList<Float> safeZoneDefined = dataStore.getSafeZoneByChildName(childName);
         System.out.println("Latitude: " + latitude + "and Longitude: " + longitude);
-        double distanceFromCenter = calculateDistanceInMeters(dataStore.getLatitude(), dataStore.getLongitude(), latitude, longitude);
+        double distanceFromCenter = calculateDistanceInMeters(safeZoneDefined.get(0), safeZoneDefined.get(1), latitude, longitude);
         System.out.println("Distance in meters between locations: " + distanceFromCenter);
-        if (distanceFromCenter > dataStore.getRange()) {
-            double distance = distanceFromCenter - dataStore.getRange();
+        if (distanceFromCenter > safeZoneDefined.get(2)) {
+            double distance = distanceFromCenter - safeZoneDefined.get(2);
             openDialog(distance);
         }
     }

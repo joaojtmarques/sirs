@@ -51,7 +51,7 @@ public class AddChildActivity extends AppCompatActivity {
         nameInput = (EditText) findViewById(R.id.childsName);
         submitButton = (Button) findViewById(R.id.submitButton);
 
-        infoRetreiverApi = RetrofitCreator.retrofitApiCreator();
+        infoRetreiverApi = RetrofitCreator.retrofitApiCreator(getApplicationContext());
 
         try {
             createBindRequest();

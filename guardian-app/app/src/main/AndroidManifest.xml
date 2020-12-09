@@ -12,7 +12,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Guardianapp"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Activities.CheckChildLocation"></activity>
         <activity android:name=".Activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,21 +19,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".Activities.AddChildActivity"
-            android:parentActivityName=".Activities.MainActivity"></activity>
-        <activity
-            android:name=".Activities.GenerateQrCode"
-            android:parentActivityName=".Activities.AddChildActivity"></activity>
-        <activity
-            android:name=".Activities.ChildAdded"
-            android:parentActivityName=".Activities.GenerateQrCode"></activity>
-        <activity
-            android:name=".Activities.DefineSafeZone"
-            android:parentActivityName=".Activities.MainActivity"></activity>
-        <activity
-            android:name=".Activities.SelectChildToLocate"
-            android:parentActivityName=".Activities.MainActivity"></activity>
+        <activity android:name=".Activities.AddChildActivity" />
+        <activity android:name=".Activities.GenerateQrCode" />
+        <activity android:name=".Activities.ChildAdded"/>
+        <activity android:name=".Activities.DefineSafeZone"/>
+        <activity android:name=".Activities.SelectChildToLocate"/>
+        <activity android:name=".Activities.SelectChildForSafeZone"></activity>
+        <activity android:name=".Activities.CheckChildLocation" />
     </application>
 
 </manifest>

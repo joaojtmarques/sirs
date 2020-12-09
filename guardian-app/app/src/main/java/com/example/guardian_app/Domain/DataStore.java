@@ -11,44 +11,31 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Set;
 
-public class DataStore implements Parcelable {
+public class DataStore implements Parcelable{
 
     private HashMap<String, String> _association;
+
+    private HashMap<String, ArrayList<Float>> _safeZones;
+
     private static PublicKey publicKey;
     private static PrivateKey privateKey;
-
-    private static float _latitude;
-    private static float _longitude;
-    private static int _range;
-
-    private static boolean _hasSafeZone;
-
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public DataStore() {
         _association = new HashMap<String, String>();
+        _safeZones = new HashMap<String, ArrayList<Float>>();
         createKeys();
-        deleteSafeZone();
     }
 
-    public void addAssociation(String childName, String id) {
-        _association.put(childName, id);
-    }
-
-    public String getAssociationByChildName(String childName) {
-        return _association.get(childName);
-    }
-
-    public Set<String> getChildNames() {
-        return _association.keySet();
-    }
 
     protected DataStore(Parcel in) {
         _association = (HashMap) in.readValue(HashMap.class.getClassLoader());
+        _safeZones = (HashMap) in.readValue(HashMap.class.getClassLoader());
     }
 
     @Override
@@ -59,6 +46,7 @@ public class DataStore implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(_association);
+        dest.writeValue(_safeZones);
     }
 
     @SuppressWarnings("unused")
@@ -73,6 +61,21 @@ public class DataStore implements Parcelable {
             return new DataStore[size];
         }
     };
+
+
+
+
+    public void addAssociation(String childName, String id) {
+        _association.put(childName, id);
+    }
+
+    public String getAssociationByChildName(String childName) {
+        return _association.get(childName);
+    }
+
+    public Set<String> getChildNames() {
+        return _association.keySet();
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void createKeys() {
@@ -107,39 +110,23 @@ public class DataStore implements Parcelable {
     }
 
 
-    public float getLatitude() {
-        return _latitude;
+    public void addSafeZone(String childName, ArrayList<Float> safeZone) {
+        _safeZones.put(childName, safeZone);
     }
 
-    public void setLatitude(float latitude) {
-        _latitude = latitude;
+    public ArrayList<Float> getSafeZoneByChildName(String childname) {
+        if (_safeZones != null) {
+            return _safeZones.get(childname);
+        }
+        return null;
     }
 
-    public float getLongitude() {
-        return _longitude;
+    public boolean isSafeZoneMapEmpty() {
+        return _safeZones.isEmpty();
     }
 
-    public void setLongitude(float longitude) {
-        _longitude = longitude;
+    public void removeSafeZone(String childName) {
+        _safeZones.remove(childName);
     }
 
-    public int getRange() {
-        return _range;
-    }
-
-    public void setRange(int range) {
-        _range = range;
-    }
-
-    public boolean hasSafeZoneDefined() {
-        return _hasSafeZone;
-    }
-
-    public void defineSafeZone() {
-        _hasSafeZone = true;
-    }
-
-    public void deleteSafeZone() {
-        _hasSafeZone = false;
-    }
 }

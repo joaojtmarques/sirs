@@ -72,7 +72,7 @@ public class LocationActivity extends AppCompatActivity {
             guardiansPublicKey = extras.getString("publicKey");
         }
 
-        communicationInterface = RetrofitCreator.retrofitApiCreator();
+        communicationInterface = RetrofitCreator.retrofitApiCreator(getApplicationContext());
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         t = findViewById(R.id.locationText);

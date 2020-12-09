@@ -39,7 +39,7 @@
         android:layout_width="269dp"
         android:layout_height="135dp"
         android:layout_marginBottom="88dp"
-        android:onClick="goToDefineSafeZone"
+        android:onClick="goToSelectChildForSafeZone"
         android:text="Define a Safe Zone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

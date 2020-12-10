@@ -28,6 +28,7 @@ public class SimpleHttpServer {
 			this.port = port;
 			server = HttpServer.create(new InetSocketAddress(this.port), 0);
 			System.out.println("server started at " + port);
+			server.createContext("/test", new TestHandler());
 			server.createContext("/bind-request", new BindRequestHandler());
 			server.createContext("/bind-confirmation", new BindConfirmationHandler());
 			server.createContext("/bind-check", new BindCheckHandler());
@@ -43,6 +44,24 @@ public class SimpleHttpServer {
 	public void Stop() {
 		server.stop(0);
 		System.out.println("server stopped");
+	}
+
+
+	public class TestHandler implements HttpHandler {
+
+		@Override
+		public void handle(HttpExchange he) throws IOException {
+			System.out.println("-> Received test request.");
+			System.out.println("\t- Request IP:" + he.getRemoteAddress());
+
+			// send response
+			String response = "Server up and running.";
+			he.getResponseHeaders().set("Content-Type", "application/json");
+			he.sendResponseHeaders(200, response.length());
+			OutputStream os = he.getResponseBody();
+			os.write(response.getBytes());
+			os.close();
+		}
 	}
 
 
@@ -68,13 +87,18 @@ public class SimpleHttpServer {
 
 			// add key to requestedAssociations
 			String pKey = request.getString("publicKey");
+			String premiumKey = request.getString("premiumKey");
 			System.out.println("\t- PublicKey: " + pKey);
 			String uniqueID = UUID.randomUUID().toString();
-			_datastore.addRequestedAssociation(pKey, uniqueID);
+			Boolean success = _datastore.addRequestedAssociation(pKey, uniqueID, premiumKey);
+			String ack = success ? "Request was made." : "No remaining requests available.";
+
+			System.out.println("\t- Ack: " + ack);
 
 			// create JSON object with response
 			JSONObject jo = new JSONObject();
 			jo.put("id", uniqueID);
+			jo.put("ack", ack);
 
 			// send response
 			String response = jo.toString();
@@ -241,17 +265,20 @@ public class SimpleHttpServer {
 
 			// get data
 			String associationId = (String) parameters.get("id");
-			ArrayList<String> data = _datastore.getData(associationId);
+			String data = _datastore.getData(associationId);
 
 			// create JSON object with data
-			JSONObject jo = new JSONObject();
+			/*JSONObject jo = new JSONObject();
 			JSONArray jsArray = new JSONArray();
 			for (String s : data) {
 				JSONObject loc = new JSONObject();
 				loc.put("value", s);
 				jsArray.put(loc);
 			}
-			jo.put("locations", jsArray);
+			jo.put("locations", jsArray);*/
+
+			JSONObject jo = new JSONObject();
+			jo.put("value", data);
 
 			System.out.println("\t- Locations: " + jo.toString());
 

@@ -11,21 +11,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.guardian_app.Domain.DataStore;
 import com.example.guardian_app.RetrofitAPI.InfoRetreiverApi;
 import com.example.guardian_app.R;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.example.guardian_app.RetrofitAPI.RetrofitCreator;
 import com.google.gson.JsonObject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ChildAdded extends AppCompatActivity{
     private TextView textViewResult;
     private InfoRetreiverApi infoRetreiverApi;
     private DataStore dataStore;
-    private String childName;
     private String childCode;
 
 
@@ -36,25 +32,12 @@ public class ChildAdded extends AppCompatActivity{
         if (extras != null) {
             dataStore = extras.getParcelable("dataStore");
             childCode = extras.getString("childCode");
-            System.out.println(dataStore.getChildNames());
         }
         textViewResult = (TextView)findViewById(R.id.text_view_result);
 
-        Gson gson = new GsonBuilder()
-                .setLenient()
-                .create();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://144.64.187.232:9000/")
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-
-        infoRetreiverApi = retrofit.create(InfoRetreiverApi.class);
+        infoRetreiverApi = RetrofitCreator.retrofitApiCreator(getApplicationContext());
 
         wasBindSuccessful();
-
-        //textViewResult.setText("SUCCESS!");
-
     }
 
     private void wasBindSuccessful() {
@@ -86,7 +69,6 @@ public class ChildAdded extends AppCompatActivity{
 
     public void goToMainActivity (View view){
         Intent intent = new Intent(this, MainActivity.class);
-        System.out.println(dataStore.getChildNames());
         intent.putExtra("dataStore", dataStore);
         startActivity(intent);
     }

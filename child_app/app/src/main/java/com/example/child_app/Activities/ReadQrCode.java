@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.child_app.RetrofitAPI.CommunicationInterface;
 import com.example.child_app.R;
+import com.example.child_app.RetrofitAPI.RetrofitCreator;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -30,12 +31,10 @@ public class ReadQrCode extends AppCompatActivity {
     private Button scan_btn;
     private CommunicationInterface communicationInterface;
     private String associationId;
-
+    private String guardianPublicKey;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i("onCreate", "on Create!!!");
-
         setContentView(R.layout.read_qrcode_activity);
 
         resultTextView = (TextView) findViewById(R.id.result_text);
@@ -47,26 +46,15 @@ public class ReadQrCode extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(), ScanCodeActivity.class));
             }
         });
-
-        System.out.println("Result = " + resultTextView.getText().toString());
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        System.out.println("Result = " + resultTextView.getText().toString());
         if (!resultTextView.getText().toString().equals("Result")) {
-            Gson gson = new GsonBuilder()
-                    .setLenient()
-                    .create();
 
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("http://144.64.187.232:9000/")
-                    .addConverterFactory(GsonConverterFactory.create(gson))
-                    .build();
+            communicationInterface = RetrofitCreator.retrofitApiCreator(getApplicationContext());
 
-            communicationInterface = retrofit.create(CommunicationInterface.class);
             createBindRequest(resultTextView.getText().toString());
         }
 
@@ -76,8 +64,10 @@ public class ReadQrCode extends AppCompatActivity {
 
     private void createBindRequest(String json) {
         JsonObject bindRequest = new JsonParser().parse(json).getAsJsonObject();
+
         associationId = bindRequest.get("associationId").getAsString();
-        System.out.println(associationId);
+        guardianPublicKey = bindRequest.get("publicKey").getAsString();
+
         Call<JsonObject> call = communicationInterface.createBindRequest(bindRequest);
         call.enqueue(new Callback<JsonObject>() {
             @Override
@@ -92,7 +82,6 @@ public class ReadQrCode extends AppCompatActivity {
                 String content = "";
                 content += "Code: " + response.code();
                 content += jsonObject1.get("ack");
-                System.out.println("Bind Result" + content);
 
                 if (jsonObject1.get("ack").getAsString().equals("Bind successful.")) {
                     goToLocationActivity();
@@ -113,6 +102,7 @@ public class ReadQrCode extends AppCompatActivity {
     private void goToLocationActivity () {
         Intent intent = new Intent(this, LocationActivity.class);
         intent.putExtra("associationId", associationId);
+        intent.putExtra("publicKey", guardianPublicKey);
         startActivity(intent);
     }
 

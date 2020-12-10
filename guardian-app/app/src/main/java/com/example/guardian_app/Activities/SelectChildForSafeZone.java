@@ -71,6 +71,7 @@ public class SelectChildForSafeZone extends AppCompatActivity implements ZoneAlr
         dataStore.removeSafeZone(childChosen);
         Intent intent = new Intent(this, DefineSafeZone.class);
         intent.putExtra("dataStore", dataStore);
+        intent.putExtra("childChosen", childChosen);
         startActivity(intent);
     }
 

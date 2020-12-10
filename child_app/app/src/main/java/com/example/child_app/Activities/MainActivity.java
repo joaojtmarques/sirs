@@ -25,9 +25,4 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void goToLocationActivity (View view){
-        Intent intent = new Intent(this, LocationActivity.class);
-        startActivity(intent);
-    }
-
 }

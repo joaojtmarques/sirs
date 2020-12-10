@@ -140,14 +140,13 @@ public class MainActivity extends AppCompatActivity {
 
                 String key = jo2.get("key").getAsString();
                 String data = jo2.get("data").getAsString();
-                System.out.println(key);
-                System.out.println(data);
 
                 SecretKey secretKey = CipherHandling.decipherKey(key, dataStore.getPrivateKey());
                 String location = CipherHandling.decipherData(secretKey, data);
 
                 String content = "Last known location about your child: " + location;
                 if (dataStore.getSafeZoneByChildName(childName) != null) {
+                    System.out.println("Checking if location is safe");
                     checkIfLocationIsSafe(location, childName);
                 }
 
@@ -174,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
         System.out.println("Distance in meters between locations: " + distanceFromCenter);
         if (distanceFromCenter > safeZoneDefined.get(2)) {
             double distance = distanceFromCenter - safeZoneDefined.get(2);
-            openDialog(distance);
+            openDialog(distance, childName);
         }
     }
 
@@ -190,10 +189,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void openDialog( double distance) { //Added argument
+    private void openDialog(double distance, String childName) { //Added argument
         AlertDialog alertDialog = new AlertDialog.Builder(this).create(); //Use context
         alertDialog.setTitle("Your child is outside of Safe Zone!");
-        alertDialog.setMessage("Your child is " + distance + " meters away from Safe Zone");
+        alertDialog.setMessage("Your child "+ childName + " is " + distance + " meters away from Safe Zone");
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {

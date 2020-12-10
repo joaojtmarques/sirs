@@ -143,6 +143,7 @@ public class DefineSafeZone extends AppCompatActivity implements ZoneDefinedDial
         safeZone.add(longitude);
         safeZone.add(range);
         dataStore.addSafeZone(childChosen, safeZone);
+        System.out.println("added " + safeZone + "to child: " + childChosen);
     }
 
 }

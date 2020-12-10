@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,14 +26,17 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class AddChildActivity extends AppCompatActivity {
-    private InfoRetreiverApi infoRetreiverApi;
+    private final static String NO_REQUESTS_AVAILABLE = "No remaining requests available.";
 
+    private InfoRetreiverApi infoRetreiverApi;
     private String childName;
     private Button submitButton;
     private EditText nameInput;
     private DataStore dataStore;
     private String childCode;
     private String publicKey;
+    private String ack;
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n")
@@ -80,6 +84,7 @@ public class AddChildActivity extends AppCompatActivity {
 
     private void createBindRequest() throws JSONException {
         JsonObject bindRequest = new JsonObject();
+        bindRequest.addProperty("premiumKey", DataStore.get_premiumKey());
         bindRequest.addProperty("publicKey", publicKey);
         Call<JsonObject> call = infoRetreiverApi.createBindRequest(bindRequest);
         call.enqueue(new Callback<JsonObject>() {
@@ -91,9 +96,11 @@ public class AddChildActivity extends AppCompatActivity {
                 }
                 JsonObject jsonObject1 = response.body();
 
-                String content = "";
-                content += "Code: " + response.code();
-                content += jsonObject1.get("id");
+                ack = jsonObject1.get("ack").getAsString();
+                if (ack.equals(NO_REQUESTS_AVAILABLE)) {
+                    Toast.makeText(getApplicationContext(),"No more children can be added", Toast.LENGTH_SHORT).show();
+                    goToMainActivity();
+                }
                 setChildCode(jsonObject1.get("id").getAsString());
             }
 
@@ -102,6 +109,12 @@ public class AddChildActivity extends AppCompatActivity {
                 System.out.println(t.getMessage());
             }
         });
+    }
+
+    private void goToMainActivity() {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("dataStore", dataStore);
+        startActivity(intent);
     }
 
     public void setChildCode(String childCode) {

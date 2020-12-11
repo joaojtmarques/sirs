@@ -13,11 +13,11 @@ public class DataStore {
     // max of locations stored per child
     private int maxLocations = 5;
 
-    // maps guardian's public key to a requested association's id
-    private HashMap<String, String> _requestedAssociations = new HashMap<>();
+    // maps a requested association's id to 1 if it exists - map for performance
+    private HashMap<String, Integer> _requestedAssociations = new HashMap<>();
 
-    // maps association id to public key of who has access
-    private HashMap<String, String> _associations = new HashMap<>();
+    // maps association ids to 1 if it exists - map for performance
+    private HashMap<String, Integer> _associations = new HashMap<>();
 
     // maps association id to child's data
     private HashMap<String, LinkedList<String>> _data = new HashMap<>();
@@ -31,13 +31,13 @@ public class DataStore {
         upgradeUser("FnJh43t8RHuF4");
     }
 
-    public String getRequestedAssociation(String pubKey) {
+    /*public String getRequestedAssociation(String pubKey) {
         return _requestedAssociations.get(pubKey);
-    }
+    }*/
 
-    public Boolean addRequestedAssociation(String pubKey, String associationId, String premiumKey) {
+    public Boolean addRequestedAssociation(String associationId, String premiumKey) {
         if (premiumKey != null && hasUsages(premiumKey)) {
-            _requestedAssociations.put(pubKey, associationId);
+            _requestedAssociations.put(associationId, 1);
             _keyUsage.put(premiumKey, _keyUsage.get(premiumKey) -1);
             return true;
         }
@@ -48,16 +48,12 @@ public class DataStore {
         return _requestedAssociations.containsKey(pubKey);
     }
 
-    public void removeRequestedAssociation(String pubKey) {
-        _requestedAssociations.remove(pubKey);
+    public void removeRequestedAssociation(String associationId) {
+        _requestedAssociations.remove(associationId);
     }
 
-    public String getAssociation(String associationId) {
-        return _associations.get(associationId);
-    }
-
-    public void addAssociation(String associationId, String pubKey) {
-        _associations.put(associationId, pubKey);
+    public void addAssociation(String associationId) {
+        _associations.put(associationId, 1);
     }
 
     public Boolean hasAssociation(String associationId) {
@@ -65,9 +61,7 @@ public class DataStore {
     }
 
     public void addLocationData(String associationId, String data) {
-        if (_data.get(associationId) == null ) {
-            _data.put(associationId, new LinkedList<>());
-        }
+        _data.computeIfAbsent(associationId, k -> new LinkedList<>());
         if (_data.get(associationId).size() == maxLocations) {
             _data.get(associationId).remove();
         }

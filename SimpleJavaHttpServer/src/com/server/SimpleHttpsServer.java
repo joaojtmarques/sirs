@@ -128,7 +128,7 @@ public class SimpleHttpsServer {
 	// HANDLERS
 	public class BindRequestHandler implements HttpHandler {
 		// receives json with
-		// 1. guardian's public key
+		// 1. guardian's user key
 		// returns uniqueID for the association
 
 		@Override
@@ -143,11 +143,9 @@ public class SimpleHttpsServer {
 			JSONObject request = new JSONObject(requestString);
 
 			// add key to requestedAssociations
-			String pKey = request.getString("publicKey");
 			String premiumKey = request.getString("premiumKey");
-			System.out.println("\t- PublicKey: " + pKey);
 			String uniqueID = UUID.randomUUID().toString();
-			Boolean success = _datastore.addRequestedAssociation(pKey, uniqueID, premiumKey);
+			Boolean success = _datastore.addRequestedAssociation(uniqueID, premiumKey);
 			String ack = success ? "Request was made." : "No remaining requests available.";
 
 			System.out.println("\t- Ack: " + ack);
@@ -170,8 +168,7 @@ public class SimpleHttpsServer {
 
 	public class BindConfirmationHandler implements HttpHandler {
 		// receives JSON with
-		// 1. guardian's public key
-		// 2. uniqueID;
+		// 1. uniqueID;
 		// to complete association with guardian
 
 		@Override
@@ -186,14 +183,12 @@ public class SimpleHttpsServer {
 			JSONObject request = new JSONObject(requestString);
 
 			// check parameters and complete association
-			String pKey = request.getString("publicKey");
-			System.out.println("\t- PKey: " + pKey);
 			String uniqueId = request.getString("associationId");
 			System.out.println("\t- Association: " + uniqueId);
 			String ack = "";
-			if (_datastore.hasRequestedAssociation(pKey) && _datastore.getRequestedAssociation(pKey).equals(uniqueId)) {
-				_datastore.removeRequestedAssociation(pKey);
-				_datastore.addAssociation(uniqueId, pKey);
+			if (_datastore.hasRequestedAssociation(uniqueId)) {
+				_datastore.removeRequestedAssociation(uniqueId);
+				_datastore.addAssociation(uniqueId);
 				ack = "Bind successful.";
 			}
 			else {

@@ -7,6 +7,8 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -80,10 +82,17 @@ public class CheckChildLocation extends AppCompatActivity {
                 SecretKey secretKey = CipherHandling.decipherKey(key, privateKey);
                 String location = CipherHandling.decipherData(secretKey, data);
 
-                String content = "Last known location about your child " + childToLocate + "\n"+ location;
+                String[] location2 = location.split("\n")[1].split(" ");
+                float latitude = Float.parseFloat(location2[0].substring(0, location2[0].length()-1).replace(",", "."));
+                float longitude = Float.parseFloat(location2[1].replace(",", "."));
 
-                textViewresult.setText(content);
+                String content = "Last known location of " + childToLocate + ":<br/>"+ location;
 
+                textViewresult.setText(Html.fromHtml(
+                        "<a href= \"https://www.google.com/maps/search/"+ latitude + ",+" + longitude + "\">" +
+                                content +
+                                "</a>"));
+                textViewresult.setMovementMethod(LinkMovementMethod.getInstance());
             }
 
             @Override

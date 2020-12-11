@@ -82,6 +82,10 @@ public class DefineSafeZone extends AppCompatActivity implements ZoneDefinedDial
             longitudeText.setError("Field cannot be empty!");
             return false;
         }
+        else if (longitudeInput.length() > 15) {
+            longitudeText.setError("There can only be inserted a maximum of 15 characters");
+            longitudeText.setText("");
+        }
         else {
             try {
                 longitude = Float.parseFloat(longitudeInput.replace(",", "."));
@@ -102,6 +106,10 @@ public class DefineSafeZone extends AppCompatActivity implements ZoneDefinedDial
             rangeText.setError("Field cannot be empty!");
             return false;
         }
+        else if (rangeInput.length() > 5) {
+            rangeText.setError("There can only be inserted a maximum of 5 digits");
+            rangeText.setText("");
+        }
         else {
             try {
                 range = Float.parseFloat(rangeInput);
@@ -121,6 +129,10 @@ public class DefineSafeZone extends AppCompatActivity implements ZoneDefinedDial
         if (latitudeInput.isEmpty()) {
             latitudeText.setError("Field cannot be empty!");
             return false;
+        }
+        else if (latitudeInput.length() > 15) {
+            latitudeText.setError("There can only be inserted a maximum of 15 characters");
+            latitudeText.setText("");
         }
         else {
             try {

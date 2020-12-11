@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.guardian_app.Domain.DataStore;
 import com.example.guardian_app.Domain.CipherHandling;
@@ -63,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         Log.i("onResume" , "On Resume!");
         super.onResume();
-        System.out.println(dataStore.getChildNames());
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -72,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
             task.cancel();
             timer.cancel();
         }
-
         Intent intent = new Intent(this, AddChildActivity.class);
         intent.putExtra("dataStore", dataStore);
         intent.putExtra("publicKey", dataStore.getPublicKeyAsString());
@@ -84,9 +83,15 @@ public class MainActivity extends AppCompatActivity {
             task.cancel();
             timer.cancel();
         }
-        Intent intent = new Intent(this, SelectChildForSafeZone.class);
-        intent.putExtra("dataStore", dataStore);
-        startActivity(intent);
+        if (dataStore.getChildNames().size() == 0) {
+            Toast.makeText(getApplicationContext(),"You first have to associate a child!", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Intent intent = new Intent(this, SelectChildForSafeZone.class);
+            intent.putExtra("dataStore", dataStore);
+            startActivity(intent);
+        }
+
     }
 
     public void goToCheckChildLocation(View view){
@@ -94,10 +99,16 @@ public class MainActivity extends AppCompatActivity {
             task.cancel();
             timer.cancel();
         }
-        Intent intent = new Intent(this, SelectChildToLocate.class);
-        intent.putExtra("dataStore", dataStore);
-        intent.putExtra("privateKey", dataStore.getPrivateKey());
-        startActivity(intent);
+        if (dataStore.getChildNames().size() == 0) {
+            Toast.makeText(getApplicationContext(),"You first have to associate a child!", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Intent intent = new Intent(this, SelectChildToLocate.class);
+            intent.putExtra("dataStore", dataStore);
+            intent.putExtra("privateKey", dataStore.getPrivateKey());
+            startActivity(intent);
+        }
+
     }
 
 

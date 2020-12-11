@@ -71,6 +71,10 @@ public class AddChildActivity extends AppCompatActivity {
         if (childName.isEmpty()) {
             nameInput.setError("Field cannot be empty!");
         }
+        else if (childName.length() > 30) {
+            nameInput.setError("Child name cannot have more than 30 characters");
+            nameInput.setText("");
+        }
         else {
             Intent intent = new Intent(this, GenerateQrCode.class);
             dataStore.addAssociation(childName, childCode);
@@ -85,7 +89,6 @@ public class AddChildActivity extends AppCompatActivity {
     private void createBindRequest() throws JSONException {
         JsonObject bindRequest = new JsonObject();
         bindRequest.addProperty("premiumKey", DataStore.get_premiumKey());
-        bindRequest.addProperty("publicKey", publicKey);
         Call<JsonObject> call = infoRetreiverApi.createBindRequest(bindRequest);
         call.enqueue(new Callback<JsonObject>() {
             @Override

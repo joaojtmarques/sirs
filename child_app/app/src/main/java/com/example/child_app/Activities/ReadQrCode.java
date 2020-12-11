@@ -65,8 +65,10 @@ public class ReadQrCode extends AppCompatActivity {
     private void createBindRequest(String json) {
         JsonObject bindRequest = new JsonParser().parse(json).getAsJsonObject();
 
+
         associationId = bindRequest.get("associationId").getAsString();
         guardianPublicKey = bindRequest.get("publicKey").getAsString();
+        bindRequest.remove("publicKey");
 
         Call<JsonObject> call = communicationInterface.createBindRequest(bindRequest);
         call.enqueue(new Callback<JsonObject>() {

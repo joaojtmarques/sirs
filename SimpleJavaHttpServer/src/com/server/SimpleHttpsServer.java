@@ -12,6 +12,7 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.*;
+import java.util.concurrent.*;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -94,7 +95,8 @@ public class SimpleHttpsServer {
 			server.createContext("/post-location", new SimpleHttpsServer.PostLocationHandler());
 			server.createContext("/get-location", new SimpleHttpsServer.GetLocationHandler());
 			// start the server
-			server.setExecutor(null);
+			ThreadPoolExecutor tpe = new ThreadPoolExecutor(5, 10, 10, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+			server.setExecutor(tpe);
 			server.start();
 
 		} catch (IOException | NoSuchAlgorithmException | KeyManagementException | KeyStoreException | UnrecoverableKeyException | CertificateException e) {

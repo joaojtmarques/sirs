@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.guardian_app.Domain.DataStore;
 import com.example.guardian_app.Domain.CipherHandling;
@@ -63,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         Log.i("onResume" , "On Resume!");
         super.onResume();
-        System.out.println(dataStore.getChildNames());
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -72,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
             task.cancel();
             timer.cancel();
         }
-
         Intent intent = new Intent(this, AddChildActivity.class);
         intent.putExtra("dataStore", dataStore);
         intent.putExtra("publicKey", dataStore.getPublicKeyAsString());
@@ -84,9 +83,15 @@ public class MainActivity extends AppCompatActivity {
             task.cancel();
             timer.cancel();
         }
-        Intent intent = new Intent(this, SelectChildForSafeZone.class);
-        intent.putExtra("dataStore", dataStore);
-        startActivity(intent);
+        if (dataStore.getChildNames().size() == 0) {
+            Toast.makeText(getApplicationContext(),"You first have to associate a child!", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Intent intent = new Intent(this, SelectChildForSafeZone.class);
+            intent.putExtra("dataStore", dataStore);
+            startActivity(intent);
+        }
+
     }
 
     public void goToCheckChildLocation(View view){
@@ -94,10 +99,16 @@ public class MainActivity extends AppCompatActivity {
             task.cancel();
             timer.cancel();
         }
-        Intent intent = new Intent(this, SelectChildToLocate.class);
-        intent.putExtra("dataStore", dataStore);
-        intent.putExtra("privateKey", dataStore.getPrivateKey());
-        startActivity(intent);
+        if (dataStore.getChildNames().size() == 0) {
+            Toast.makeText(getApplicationContext(),"You first have to associate a child!", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Intent intent = new Intent(this, SelectChildToLocate.class);
+            intent.putExtra("dataStore", dataStore);
+            intent.putExtra("privateKey", dataStore.getPrivateKey());
+            startActivity(intent);
+        }
+
     }
 
 
@@ -140,14 +151,13 @@ public class MainActivity extends AppCompatActivity {
 
                 String key = jo2.get("key").getAsString();
                 String data = jo2.get("data").getAsString();
-                System.out.println(key);
-                System.out.println(data);
 
                 SecretKey secretKey = CipherHandling.decipherKey(key, dataStore.getPrivateKey());
                 String location = CipherHandling.decipherData(secretKey, data);
 
                 String content = "Last known location about your child: " + location;
                 if (dataStore.getSafeZoneByChildName(childName) != null) {
+                    System.out.println("Checking if location is safe");
                     checkIfLocationIsSafe(location, childName);
                 }
 
@@ -174,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
         System.out.println("Distance in meters between locations: " + distanceFromCenter);
         if (distanceFromCenter > safeZoneDefined.get(2)) {
             double distance = distanceFromCenter - safeZoneDefined.get(2);
-            openDialog(distance);
+            openDialog(distance, childName);
         }
     }
 
@@ -190,10 +200,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void openDialog( double distance) { //Added argument
+    private void openDialog(double distance, String childName) { //Added argument
         AlertDialog alertDialog = new AlertDialog.Builder(this).create(); //Use context
         alertDialog.setTitle("Your child is outside of Safe Zone!");
-        alertDialog.setMessage("Your child is " + distance + " meters away from Safe Zone");
+        alertDialog.setMessage("Your child "+ childName + " is " + distance + " meters away from Safe Zone");
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {

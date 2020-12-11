@@ -22,6 +22,8 @@ public class DataStore implements Parcelable{
 
     private HashMap<String, ArrayList<Float>> _safeZones;
 
+    private final static String _premiumKey = "FnJh43t8RHuF4";
+
     private static PublicKey publicKey;
     private static PrivateKey privateKey;
 
@@ -111,6 +113,9 @@ public class DataStore implements Parcelable{
 
 
     public void addSafeZone(String childName, ArrayList<Float> safeZone) {
+        if (_safeZones.containsKey(childName)) {
+            _safeZones.remove(childName);
+        }
         _safeZones.put(childName, safeZone);
     }
 
@@ -129,4 +134,7 @@ public class DataStore implements Parcelable{
         _safeZones.remove(childName);
     }
 
+    public static String get_premiumKey() {
+        return _premiumKey;
+    }
 }

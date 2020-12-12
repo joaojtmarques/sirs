@@ -41,6 +41,6 @@ Change baseUrl in each of these files to the ip you entered in the [domains.ext]
 [2]:https://github.com/joaojtmarques/sirs/blob/2ee2ac9b544c6aa2c276c7c978ff3ff8f5679a50/SimpleJavaHttpServer/src/com/server/SimpleHttpsServer.java#L38
 [3]:https://github.com/joaojtmarques/sirs/blob/2ee2ac9b544c6aa2c276c7c978ff3ff8f5679a50/SimpleJavaHttpServer/src/com/server/SimpleHttpsServer.java#L39
 [4]:https://github.com/joaojtmarques/sirs/blob/2ee2ac9b544c6aa2c276c7c978ff3ff8f5679a50/SimpleJavaHttpServer/src/com/server/SimpleHttpsServer.java#L45
-[5]:
+[5]:https://github.com/joaojtmarques/sirs/blob/main/Server/domains.ext
 [6]:https://github.com/joaojtmarques/sirs/blob/2ee2ac9b544c6aa2c276c7c978ff3ff8f5679a50/guardian-app/app/src/main/java/com/example/guardian_app/RetrofitAPI/RetrofitCreator.java#L31
 [7]:https://github.com/joaojtmarques/sirs/blob/2ee2ac9b544c6aa2c276c7c978ff3ff8f5679a50/child_app/app/src/main/java/com/example/child_app/RetrofitAPI/RetrofitCreator.java#L33

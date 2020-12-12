@@ -42,7 +42,7 @@ public class SimpleHttpsServer {
 			KeyStore keystore = KeyStore.getInstance("pkcs12");
 			keystore.load(fIn, storepass);
 
-			String trustStoreFilename = "F:/Universidade/4th_Year/SIRS/sirs/Server/truststore.jks";
+			String trustStoreFilename = "F:/Universidade/4th_Year/SIRS/sirs/Server/serverTrustStore";
 			FileInputStream fIn2 = new FileInputStream(trustStoreFilename);
 			KeyStore truststore = KeyStore.getInstance("pkcs12");
 			truststore.load(fIn2, trustpass);

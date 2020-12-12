@@ -21,7 +21,7 @@ In the Server/ directory:
 * Run, filling the fields of "subj" as desired: openssl req -new -nodes -newkey rsa:2048 -keyout serverPrivKey.key -out serverCsr.csr -subj "/C=PT/ST=YourState/L=YourCity/O=Example-Certificates/CN=localhost.local"
 * Run: openssl x509 -req -sha256 -days 1024 -in serverCsr.csr -CA ../CA/CAPrivate.pem -CAkey ../CA/CAPrivate.key -CAcreateserial -extfile domains.ext -out serverCertificate.crt (The asked password is "mypassword")
 1. Run: openssl pkcs12 -export -in serverCertificate.crt -inkey serverPrivKey.key -certfile serverCertificate.crt -out serverKeyStore.p12 (generates KeyStore with user-defined password)
-2. Run: keytool -importcert -alias ca -file ../CA/CAPrivate.pem -trustcacerts -keystore truststore.jks -storetype JKS (generates a TrustStore with the CA's certificate and a user-defined password)
+2. Run: keytool -importcert -alias ca -file ../CA/CAPrivate.pem -trustcacerts -keystore serverTrustStore -storetype JKS (generates a TrustStore with the CA's certificate and a user-defined password)
 
 Do the following changes to SimpleJavaHttpServer/src/com/server/SimpleHttpsServer.java:
 

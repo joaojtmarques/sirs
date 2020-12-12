@@ -1,3 +1,4 @@
 SimpleJavaHttpServer/target/*
 guardian-app/.idea/*
 child_app/.idea/*
+*.class

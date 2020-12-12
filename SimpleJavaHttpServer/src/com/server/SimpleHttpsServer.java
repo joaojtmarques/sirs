@@ -35,17 +35,17 @@ public class SimpleHttpsServer {
 
 			// load certificate
 			String keystoreFilename = "F:/Universidade/4th_Year/SIRS/sirs/Server/serverKeyStore.p12";
-			char[] storepass = "mypassword".toCharArray();
-			char[] keypass = "mypassword".toCharArray();
+			char[] storepass = "keypassword".toCharArray();
+			char[] trustpass = "trustpassword".toCharArray();
 			String alias = "1";
 			FileInputStream fIn = new FileInputStream(keystoreFilename);
 			KeyStore keystore = KeyStore.getInstance("pkcs12");
 			keystore.load(fIn, storepass);
 
-			String trustStoreFilename = "F:/Universidade/4th_Year/SIRS/sirs/Server/serverTrustStore";
+			String trustStoreFilename = "F:/Universidade/4th_Year/SIRS/sirs/Server/truststore.jks";
 			FileInputStream fIn2 = new FileInputStream(trustStoreFilename);
 			KeyStore truststore = KeyStore.getInstance("pkcs12");
-			truststore.load(fIn2, storepass);
+			truststore.load(fIn2, trustpass);
 
 			// display certificate
 			Certificate cert = keystore.getCertificate(alias);
@@ -53,7 +53,7 @@ public class SimpleHttpsServer {
 
 			// setup the key manager factory
 			KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
-			kmf.init(keystore, keypass);
+			kmf.init(keystore, storepass);
 
 			// setup the trust manager factory
 			TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");

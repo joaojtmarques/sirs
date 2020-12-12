@@ -25,14 +25,22 @@ In the Server/ directory:
 
 Do the following changes to SimpleJavaHttpServer/src/com/server/SimpleHttpsServer.java:
 
-* The KeyStore path must be changed in the line 37 to the one created in (1).
-* Change the password in line 38 to the one you defined in (2).
-* Change the password in line 39 to the one you defined in (1).
-* The TrustStore path must be changed in line 45 to the one created on (2).
+* The KeyStore path must be changed in the [line 37][1] to the one created in (1).
+* Change the password in [line 38][2] to the one you defined in (2).
+* Change the password in [line 39][3] to the one you defined in (1).
+* The TrustStore path must be changed in [line 45][4] to the one created on (2).
 
 # Setting up the apps for running with the new Server
 
-Change baseUrl in each of these files to the ip you entered in the domains.ext file:
+Change baseUrl in each of these files to the ip you entered in the [domains.ext][5] file:
 
-* guardian-app/app/src/main/java/com/example/guardian_app/RetrofitAPI/RetrofitCreator.java - line 31
-* child_app/app/src/main/java/com/example/child_app/RetrofitAPI/RetrofitCreator - line 33
+* guardian-app/app/src/main/java/com/example/guardian_app/RetrofitAPI/RetrofitCreator.java - [line 31][6]
+* child_app/app/src/main/java/com/example/child_app/RetrofitAPI/RetrofitCreator - [line 33][7]
+
+[1]:https://github.com/joaojtmarques/sirs/blob/2ee2ac9b544c6aa2c276c7c978ff3ff8f5679a50/SimpleJavaHttpServer/src/com/server/SimpleHttpsServer.java#L37
+[2]:https://github.com/joaojtmarques/sirs/blob/2ee2ac9b544c6aa2c276c7c978ff3ff8f5679a50/SimpleJavaHttpServer/src/com/server/SimpleHttpsServer.java#L38
+[3]:https://github.com/joaojtmarques/sirs/blob/2ee2ac9b544c6aa2c276c7c978ff3ff8f5679a50/SimpleJavaHttpServer/src/com/server/SimpleHttpsServer.java#L39
+[4]:https://github.com/joaojtmarques/sirs/blob/2ee2ac9b544c6aa2c276c7c978ff3ff8f5679a50/SimpleJavaHttpServer/src/com/server/SimpleHttpsServer.java#L45
+[5]:
+[6]:https://github.com/joaojtmarques/sirs/blob/2ee2ac9b544c6aa2c276c7c978ff3ff8f5679a50/guardian-app/app/src/main/java/com/example/guardian_app/RetrofitAPI/RetrofitCreator.java#L31
+[7]:https://github.com/joaojtmarques/sirs/blob/2ee2ac9b544c6aa2c276c7c978ff3ff8f5679a50/child_app/app/src/main/java/com/example/child_app/RetrofitAPI/RetrofitCreator.java#L33

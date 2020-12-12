@@ -16,12 +16,12 @@ As for the Server, we set it up so that it would run on one of our computers. It
 In order to run the server on a different machine, a new Certificate must be created for that machine and signed by the CA. To do so:
 
 In the Server/ directory:
-
+* Run: ```rm s*```
 * Modify domains.ext so that the new machine's IP appears after "IP.1 =".
-* Run, filling the fields of "subj" as desired: openssl req -new -nodes -newkey rsa:2048 -keyout serverPrivKey.key -out serverCsr.csr -subj "/C=PT/ST=YourState/L=YourCity/O=Example-Certificates/CN=localhost.local"
-* Run: openssl x509 -req -sha256 -days 1024 -in serverCsr.csr -CA ../CA/CAPrivate.pem -CAkey ../CA/CAPrivate.key -CAcreateserial -extfile domains.ext -out serverCertificate.crt (The asked password is "mypassword")
-1. Run: openssl pkcs12 -export -in serverCertificate.crt -inkey serverPrivKey.key -certfile serverCertificate.crt -out serverKeyStore.p12 (generates KeyStore with user-defined password)
-2. Run: keytool -importcert -alias ca -file ../CA/CAPrivate.pem -trustcacerts -keystore serverTrustStore -storetype JKS (generates a TrustStore with the CA's certificate and a user-defined password)
+* Run, filling the fields of "subj" as desired: ```openssl req -new -nodes -newkey rsa:2048 -keyout serverPrivKey.key -out serverCsr.csr -subj "/C=PT/ST=YourState/L=YourCity/O=Example-Certificates/CN=localhost.local"```
+* Run: ```openssl x509 -req -sha256 -days 1024 -in serverCsr.csr -CA ../CA/CAPrivate.pem -CAkey ../CA/CAPrivate.key -CAcreateserial -extfile domains.ext -out serverCertificate.crt``` (The asked password is "mypassword")
+1. Run: ```openssl pkcs12 -export -in serverCertificate.crt -inkey serverPrivKey.key -certfile serverCertificate.crt -out serverKeyStore.p12``` (generates KeyStore with user-defined password)
+2. Run: ```keytool -importcert -alias ca -file ../CA/CAPrivate.pem -trustcacerts -keystore serverTrustStore -storetype JKS``` (generates a TrustStore with the CA's certificate and a user-defined password)
 
 Do the following changes to SimpleJavaHttpServer/src/com/server/SimpleHttpsServer.java:
 

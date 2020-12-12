@@ -16,16 +16,31 @@ As for the Server, we set it up so that it would run on one of our computers. It
 In order to run the server on a different machine, a new Certificate must be created for that machine and signed by the CA. To do so:
 
 In the Server/ directory:
+
 * Modify domains.ext so that the new machine's IP appears after "IP.1 =".
 * Run, filling the fields of "subj" as desired: openssl req -new -nodes -newkey rsa:2048 -keyout serverPrivKey.key -out serverCsr.csr -subj "/C=PT/ST=YourState/L=YourCity/O=Example-Certificates/CN=localhost.local"
-* Run: openssl x509 -req -sha256 -days 1024 -in serverCsr.csr -CA ../CA/CAPrivate.pem -CAkey ../CA/CAPrivate.key -CAcreateserial -extfile domains.ext -out serverCertificate.crt
+* Run: openssl x509 -req -sha256 -days 1024 -in serverCsr.csr -CA ../CA/CAPrivate.pem -CAkey ../CA/CAPrivate.key -CAcreateserial -extfile domains.ext -out serverCertificate.crt (The asked password is "mypassword")
 1. Run: openssl pkcs12 -export -in serverCertificate.crt -inkey serverPrivKey.key -certfile serverCertificate.crt -out serverKeyStore.p12 (generates KeyStore with user-defined password)
 2. Run: keytool -importcert -alias ca -file ../CA/CAPrivate.pem -trustcacerts -keystore truststore.jks -storetype JKS (generates a TrustStore with the CA's certificate and a user-defined password)
 
 Do the following changes to SimpleJavaHttpServer/src/com/server/SimpleHttpsServer.java:
-* The KeyStore path must be changed in the line 37 to the one created in (1).
-* Change the password in line 38 to the one you defined in (2).
-* Change the password in line 39 to the one you defined in (1).
-* Change alias in line 40 to the one defined in (2) (It defaults to "1" in case the defined alias doesn't work).
-* The TrustStore path must be changed in line 45 to the one created on (2).
 
+* The KeyStore path must be changed in the [line 37][1] to the one created in (1).
+* Change the password in [line 38][2] to the one you defined in (2).
+* Change the password in [line 39][3] to the one you defined in (1).
+* The TrustStore path must be changed in [line 45][4] to the one created on (2).
+
+# Setting up the apps for running with the new Server
+
+Change baseUrl in each of these files to the ip you entered in the [domains.ext][5] file:
+
+* guardian-app/app/src/main/java/com/example/guardian_app/RetrofitAPI/RetrofitCreator.java - [line 31][6]
+* child_app/app/src/main/java/com/example/child_app/RetrofitAPI/RetrofitCreator - [line 33][7]
+
+[1]:https://github.com/joaojtmarques/sirs/blob/2ee2ac9b544c6aa2c276c7c978ff3ff8f5679a50/SimpleJavaHttpServer/src/com/server/SimpleHttpsServer.java#L37
+[2]:https://github.com/joaojtmarques/sirs/blob/2ee2ac9b544c6aa2c276c7c978ff3ff8f5679a50/SimpleJavaHttpServer/src/com/server/SimpleHttpsServer.java#L38
+[3]:https://github.com/joaojtmarques/sirs/blob/2ee2ac9b544c6aa2c276c7c978ff3ff8f5679a50/SimpleJavaHttpServer/src/com/server/SimpleHttpsServer.java#L39
+[4]:https://github.com/joaojtmarques/sirs/blob/2ee2ac9b544c6aa2c276c7c978ff3ff8f5679a50/SimpleJavaHttpServer/src/com/server/SimpleHttpsServer.java#L45
+[5]:https://github.com/joaojtmarques/sirs/blob/main/Server/domains.ext
+[6]:https://github.com/joaojtmarques/sirs/blob/2ee2ac9b544c6aa2c276c7c978ff3ff8f5679a50/guardian-app/app/src/main/java/com/example/guardian_app/RetrofitAPI/RetrofitCreator.java#L31
+[7]:https://github.com/joaojtmarques/sirs/blob/2ee2ac9b544c6aa2c276c7c978ff3ff8f5679a50/child_app/app/src/main/java/com/example/child_app/RetrofitAPI/RetrofitCreator.java#L33
